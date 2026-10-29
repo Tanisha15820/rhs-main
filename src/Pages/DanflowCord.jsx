@@ -36,7 +36,7 @@ import SEO from "../Components/SEO";
 
 import bannerBg from "../assets/images/smartxide_banner.png";
 
-import machineImage from "../assets/images/danflow-cord.png";
+import machineImage from "../assets/images/chord.png";
 import cord1Img from "../assets/images/Cord1.png";
 import cord2Img from "../assets/images/Cord2.png";
 import cord3Img from "../assets/images/Cord3.png";
@@ -450,18 +450,18 @@ const DanflowCord = () => {
 
             <FeatureCard
               number="01"
-              type="FLOW MEASUREMENT"
-              title="Collection Funnel"
-              description="Wide collection funnel directs urine into the measuring beaker for flow-volume assessment."
+              type="CONTROL UNIT"
+              title="Pocket-Size USB Control Unit"
+              description="Compact aluminum module connects directly to any PC or laptop via USB with no external charging."
               image={cord1Img}
               position="left-4 top-16"
             />
 
             <FeatureCard
               number="02"
-              type="CONTROL UNIT"
-              title="USB Connection"
-              description="Pocket-sized control unit connects directly to a PC or laptop via USB, without separate charging."
+              type="SIGNAL INTERFACE"
+              title="Multi-Pin Transducer Port"
+              description="Industrial locking multi-pin connector ensures reliable digital signal and power transfer."
               image={cord2Img}
               position="bottom-14 left-4"
             />
@@ -469,17 +469,17 @@ const DanflowCord = () => {
             <FeatureCard
               number="03"
               type="WEIGHT CELL"
-              title="Precision Transducer"
-              description="Weight-cell transducer measures collected urine weight to determine flow rate and voided volume."
+              title="Precision Weight-Cell Base"
+              description="High-accuracy load-cell platform measures urine weight to compute real-time flow rate and volume."
               image={cord3Img}
               position="top-16 right-4"
             />
 
             <FeatureCard
               number="04"
-              type="DIAGNOSTIC SOFTWARE"
-              title="Real-Time Flow Curves"
-              description="PC software displays real-time uroflowmetry curves, patient records and examination reports."
+              type="STATUS INDICATOR"
+              title="Optical LED Status Light"
+              description="Integrated front LED indicator provides instant visual confirmation of USB power and readiness."
               image={cord4Img}
               position="bottom-14 right-4"
             />
@@ -542,7 +542,7 @@ const DanflowCord = () => {
 
                 alt="MMT DanFlow Cord Uroflowmeter"
 
-                className="relative z-10 h-[380px] w-auto object-contain drop-shadow-[0_25px_35px_rgba(25,168,232,0.22)] lg:h-[460px] rounded-2xl"
+                className="relative z-10 h-[380px] w-auto object-contain drop-shadow-[0_25px_35px_rgba(25,168,232,0.22)] lg:h-[360px] -translate-y-8 rounded-2xl"
 
                 initial={{ opacity: 0, y: 30 }}
 
@@ -588,33 +588,33 @@ const DanflowCord = () => {
 
               <MobileFeatureCard
                 number="01"
-                type="FLOW MEASUREMENT"
-                title="Collection Funnel"
-                description="Wide collection funnel directs urine into the measuring beaker for flow-volume assessment."
+                type="CONTROL UNIT"
+                title="Pocket-Size USB Control Unit"
+                description="Compact aluminum module connects directly to any PC or laptop via USB with no external charging."
                 image={cord1Img}
               />
 
               <MobileFeatureCard
                 number="02"
-                type="CONTROL UNIT"
-                title="USB Connection"
-                description="Pocket-sized control unit connects directly to a PC or laptop via USB, without separate charging."
+                type="SIGNAL INTERFACE"
+                title="Multi-Pin Transducer Port"
+                description="Industrial locking multi-pin connector ensures reliable digital signal and power transfer."
                 image={cord2Img}
               />
 
               <MobileFeatureCard
                 number="03"
                 type="WEIGHT CELL"
-                title="Precision Transducer"
-                description="Weight-cell transducer measures collected urine weight to determine flow rate and voided volume."
+                title="Precision Weight-Cell Base"
+                description="High-accuracy load-cell platform measures urine weight to compute real-time flow rate and volume."
                 image={cord3Img}
               />
 
               <MobileFeatureCard
                 number="04"
-                type="DIAGNOSTIC SOFTWARE"
-                title="Real-Time Flow Curves"
-                description="PC software displays real-time uroflowmetry curves, patient records and examination reports."
+                type="STATUS INDICATOR"
+                title="Optical LED Status Light"
+                description="Integrated front LED indicator provides instant visual confirmation of USB power and readiness."
                 image={cord4Img}
               />
 

@@ -122,7 +122,6 @@ export const getAllBanners = () => {
     return DEFAULT_BANNER_SLIDES;
   } catch (error) {
     console.error("Failed to read banner slides from localStorage:", error);
-
     return DEFAULT_BANNER_SLIDES;
   }
 };

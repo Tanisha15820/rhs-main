@@ -1,54 +1,173 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import cystoscopy1 from "../../assets/images/cystoscopy1.png";
-import cystoscopy2 from "../../assets/images/cystoscopy2.png";
-import cystoscopy3 from "../../assets/images/cystoscopy3.png";
-import cystoscopy4 from "../../assets/images/cystoscopy4.png";
-import cystoscopy5 from "../../assets/images/cystoscopy5.png";
+import CystoscopyMachineImg from "../../assets/images/RZ-Mediz.png";
 
-// ================= MACHINE POINT DATA =================
+/* =========================================================
+   DESKTOP KEY POINT
+   ========================================================= */
 
-const machinePoints = [
-  {
-    title: "Cystoscopy System",
-    description: "Complete Endoscopic System",
-  },
-  {
-    title: "Monitor Display",
-    description: "High Resolution Visualisation",
-  },
-  {
-    title: "Camera Control Unit",
-    description: "Image Processing & Control",
-  },
-  {
-    title: "LED Light Source",
-    description: "High Intensity Illuminations",
-  },
-  {
-    title: "Irrigation / Suction Line",
-    description: "Fluid Delivery & Suction",
-  },
-  {
-    title: "Irrigation Canister",
-    description: "Fluid Collection",
-  },
-  {
-    title: "Irrigation Pump",
-    description: "Controlled Fluid Flow",
-  },
-  {
-    title: "Foot Switch",
-    description: "Hands-free Operation",
-  },
-  {
-    title: "Mobile Trolley Base",
-    description: "Stable & Smooth Mobility",
-  },
-];
+const KeyPoint = ({
+  title,
+  description,
+  position,
+  side = "left",
+  lineWidth = 55,
+}) => {
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        scale: 0.96,
+      }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+      }}
+      exit={{
+        opacity: 0,
+        scale: 0.96,
+      }}
+      transition={{
+        duration: 0.25,
+      }}
+      className={`
+        pointer-events-none
+        absolute
+        z-[100]
+        hidden
+        lg:flex
+        ${side === "bottom" || side === "top"
+          ? "flex-col items-center"
+          : "items-center"
+        }
+        ${position}
+      `}
+    >
+      {/* RIGHT CONNECTOR */}
+      {side === "right" && (
+        <div className="flex items-center">
+          <div
+            className="h-[1px] bg-[#1677FF]"
+            style={{
+              width: `${lineWidth}px`,
+            }}
+          />
+          <div className="h-[8px] w-[8px] rounded-full bg-[#1677FF]" />
+        </div>
+      )}
 
-// ================= MOBILE KEY POINT =================
+      {/* TOP CONNECTOR */}
+      {side === "top" && (
+        <div className="flex flex-col items-center">
+          <div className="h-[8px] w-[8px] rounded-full bg-[#1677FF]" />
+          <div
+            className="w-[1px] bg-[#1677FF]"
+            style={{
+              height: `${lineWidth}px`,
+            }}
+          />
+        </div>
+      )}
+
+      {/* CARD */}
+      <div
+        className="
+          min-w-[155px]
+          rounded-[10px]
+          border
+          border-[#2F80ED]/60
+          bg-white
+          px-3
+          py-2.5
+          shadow-[0_8px_24px_rgba(15,23,42,0.08)]
+        "
+      >
+        <div className="flex items-start gap-2">
+          {/* ICON */}
+          <div
+            className="
+              mt-[2px]
+              flex
+              h-[26px]
+              w-[26px]
+              shrink-0
+              items-center
+              justify-center
+              rounded-md
+              bg-[#1677FF]/10
+            "
+          >
+            <div
+              className="
+                h-[13px]
+                w-[3px]
+                rotate-45
+                rounded-full
+                bg-[#1677FF]
+              "
+            />
+          </div>
+
+          {/* TEXT */}
+          <div>
+            <h4
+              className="
+                text-[11px]
+                font-semibold
+                leading-tight
+                text-slate-900
+              "
+            >
+              {title}
+            </h4>
+
+            <p
+              className="
+                mt-[3px]
+                text-[8px]
+                leading-[1.4]
+                text-slate-400
+              "
+            >
+              {description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* LEFT CONNECTOR */}
+      {side === "left" && (
+        <div className="flex items-center">
+          <div className="h-[8px] w-[8px] rounded-full bg-[#1677FF]" />
+          <div
+            className="h-[1px] bg-[#1677FF]"
+            style={{
+              width: `${lineWidth}px`,
+            }}
+          />
+        </div>
+      )}
+
+      {/* BOTTOM CONNECTOR */}
+      {side === "bottom" && (
+        <div className="flex flex-col items-center">
+          <div
+            className="w-[1px] bg-[#1677FF]"
+            style={{
+              height: `${lineWidth}px`,
+            }}
+          />
+          <div className="h-[8px] w-[8px] rounded-full bg-[#1677FF]" />
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+/* =========================================================
+   MOBILE KEY POINT
+   ========================================================= */
 
 const MobileKeyPoint = ({ title, description, index }) => {
   return (
@@ -94,7 +213,15 @@ const MobileKeyPoint = ({ title, description, index }) => {
           bg-[#1677FF]/10
         "
       >
-        <div className="h-[14px] w-[3px] rotate-45 rounded-full bg-[#1677FF]" />
+        <div
+          className="
+            h-[14px]
+            w-[3px]
+            rotate-45
+            rounded-full
+            bg-[#1677FF]
+          "
+        />
       </div>
 
       <div className="min-w-0">
@@ -109,7 +236,14 @@ const MobileKeyPoint = ({ title, description, index }) => {
           {title}
         </h4>
 
-        <p className="mt-1 text-[10px] leading-[1.4] text-slate-400">
+        <p
+          className="
+            mt-1
+            text-[10px]
+            leading-[1.4]
+            text-slate-400
+          "
+        >
           {description}
         </p>
       </div>
@@ -117,299 +251,293 @@ const MobileKeyPoint = ({ title, description, index }) => {
   );
 };
 
-// Cystoscopy Machine Component
+/* =========================================================
+   RZ MEDIZINTECHNIK CYSTOSCOPY KEYPOINT DATA
+   ========================================================= */
+
+const machinePoints = [
+  {
+    title: "Color-Coded Lock Adapters",
+    description: "3-Step Storz, Wolf & Olympus Couplers",
+  },
+  {
+    title: "Working Channel Bridges",
+    description: "1 & 2 Channel Low-Angle Instrument Ports",
+  },
+  {
+    title: "Atraumatic Sheath Shafts",
+    description: "17–25 Charr. German Stainless Steel",
+  },
+  {
+    title: "Albarran Deflector System",
+    description: "Active Ratchet-Lock Catheter Steering",
+  },
+  {
+    title: "Quick-Lock Valve Couplers",
+    description: "Hermetic Bayonet Irrigation Seals",
+  },
+  {
+    title: "CAD Rod-Lens Optical Set",
+    description: "0°, 12°, 30°, 45° & 70° HD Telescopes",
+  },
+];
+
+const machineParts = [
+  {
+    id: "lock-adapters",
+    clipPath: "polygon(0% 0%, 48% 0%, 48% 33%, 0% 33%)",
+    x: -20,
+    y: -24,
+  },
+  {
+    id: "sheaths-and-bridges",
+    clipPath:
+      "polygon(48% 0%, 100% 0%, 100% 54%, 35% 51%, 33% 49%, 28% 49%, 26% 52%, 6% 56%, 6% 88%, 0% 88%, 0% 33%, 48% 33%)",
+    x: 20,
+    y: -14,
+  },
+  {
+    id: "cad-modular-blueprint",
+    clipPath:
+      "polygon(0% 88%, 6% 88%, 6% 56%, 26% 52%, 28% 49%, 33% 49%, 35% 51%, 100% 54%, 100% 100%, 0% 100%)",
+    x: 0,
+    y: 26,
+  },
+];
+
+/* =========================================================
+   MAIN COMPONENT
+   ========================================================= */
+
 const CystoscopyMachine = () => {
-  const [isExploded, setIsExploded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleMachine = () => {
-    setIsExploded((prev) => !prev);
+    setIsExpanded((prev) => !prev);
   };
 
   return (
-    <section className="relative overflow-hidden bg-white py-[20px]">
-      <div
-        className={`
-          relative
-          mx-auto
-          flex
-          w-full
-          max-w-[1100px]
-          items-center
-          justify-center
-          px-4
+    <section
+      className="
+        relative
+        overflow-hidden
+        bg-white
+        py-12
+        sm:py-16
+        lg:py-[70px]
+      "
+    >
+      {/* =====================================================
+          MACHINE AREA
+         ===================================================== */}
 
-          min-h-[300px]
-          sm:min-h-[400px]
-          md:min-h-[520px]
-          lg:min-h-[760px]
-        `}
+      <div
+        className="
+          relative
+          left-1/2
+          -translate-x-1/2
+          w-screen
+          max-w-none
+          min-h-[420px]
+          sm:min-h-[500px]
+          lg:min-h-[560px]
+        "
       >
-        {/* Soft Background Glow */}
+        {/* =================================================
+            MACHINE WRAPPER
+           ================================================= */}
+
         <div
           className="
-            pointer-events-none
             absolute
             left-1/2
             top-1/2
-            h-[330px]
-            w-[330px]
             -translate-x-1/2
             -translate-y-1/2
-            rounded-full
-            bg-[#1677FF]/[0.035]
-            blur-[100px]
+            cursor-pointer
+            outline-none
+            min-h-[400px]
+            sm:min-h-[460px]
+            lg:min-h-[500px]
+            w-[290px]
+            xs:w-[330px]
+            sm:w-[420px]
+            lg:w-[540px]
+            max-w-full
           "
-        />
-
-        {/* Machine Container */}
-        <div
           onClick={toggleMachine}
           role="button"
           tabIndex={0}
-          aria-expanded={isExploded}
           aria-label={
-            isExploded
-              ? "Collapse Cystoscopy machine"
-              : "Explore Cystoscopy machine"
+            isExpanded
+              ? "Collapse RZ Medizintechnik Cystoscopy details"
+              : "Expand RZ Medizintechnik Cystoscopy details"
           }
+          aria-expanded={isExpanded}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               toggleMachine();
             }
           }}
-          className="
-            absolute
-            left-1/2
-            top-1/2
-            z-20
-            h-[720px]
-            w-[760px]
-            cursor-pointer
-            outline-none
-            -translate-x-1/2
-            -translate-y-1/2
-            scale-[0.5]
-            sm:scale-[0.68]
-            md:scale-[0.84]
-            lg:scale-100
-          "
         >
+          {/* =================================================
+              DESKTOP KEY POINTS
+             ================================================= */}
+
           <AnimatePresence>
-            {isExploded && (
+            {isExpanded && (
               <>
+                {/* Color-Coded Lock Adapters */}
                 <KeyPoint
-                  title="Cystoscopy System"
-                  description="Complete Endoscopic System"
-                  position="left-[-75px] top-[160px]"
+                  title="Color-Coded Lock Adapters"
+                  description="3-Step Storz, Wolf & Olympus Couplers"
+                  position="left-[-220px] top-[85px]"
                   side="left"
                   lineWidth={55}
                 />
 
+                {/* Working Channel Bridges */}
                 <KeyPoint
-                  title="Monitor Display"
-                  description="High Resolution Visualisation"
-                  position="right-[65px] top-[100px]"
+                  title="Working Channel Bridges"
+                  description="1 & 2 Channel Low-Angle Instrument Ports"
+                  position="right-[-270px] top-[85px]"
                   side="right"
                   lineWidth={55}
                 />
 
+                {/* Atraumatic Sheath Shafts */}
                 <KeyPoint
-                  title="Camera Control Unit"
-                  description="Image Processing & Control"
-                  position="right-[95px] top-[280px]"
-                  side="right"
-                  lineWidth={55}
-                />
-
-                <KeyPoint
-                  title="LED Light source"
-                  description="High Intensity Illuminations"
-                  position="right-[95px] top-[350px]"
-                  side="right"
-                  lineWidth={55}
-                />
-
-                <KeyPoint
-                  title="Irrigation / Suction Line"
-                  description="Fluid Delivery & Suction"
-                  position="left-[-35px] top-[230px]"
+                  title="Atraumatic Sheath Shafts"
+                  description="17–25 Charr. German Stainless Steel"
+                  position="left-[-155px] top-[185px]"
                   side="left"
-                  lineWidth={60}
-                />
-
-                <KeyPoint
-                  title="Irrigation Canister"
-                  description="Fluid Collection"
-                  position="left-[-35px] top-[320px]"
-                  side="left"
-                  lineWidth={60}
-                />
-
-                <KeyPoint
-                  title="Irrigation Pump"
-                  description="Controlled Fluid Flow"
-                  position="right-[95px] top-[420px]"
-                  side="right"
                   lineWidth={55}
                 />
 
+
+                {/* Quick-Lock Valve Couplers */}
                 <KeyPoint
-                  title="Foot Switch"
-                  description="Hands-free Operation"
-                  position="right-[-105px] top-[580px]"
-                  side="right"
+                  title="Quick-Lock Valve Couplers"
+                  description="Hermetic Bayonet Irrigation Seals"
+                  position="left-[-140px] top-[315px]"
+                  side="left"
                   lineWidth={55}
                 />
 
+                {/* CAD Rod-Lens Optical Set */}
                 <KeyPoint
-                  title="Mobile Trolley Base"
-                  description="Stable & Smooth Mobility"
-                  position="left-[70px] top-[540px]"
-                  side="left"
-                  lineWidth={60}
+                  title="CAD Rod-Lens Optical Set"
+                  description="0°, 12°, 30°, 45° & 70° HD Telescopes"
+                  position="right-[-140px] top-[345px]"
+                  side="right"
+                  lineWidth={55}
                 />
               </>
             )}
           </AnimatePresence>
 
-          {/* Image 2 Left Side Component */}
-          <motion.img
-            src={cystoscopy2}
-            alt="Cystoscopy left component"
-            draggable={false}
-            animate={{
-              x: isExploded ? -35 : 0,
-              y: isExploded ? -10 : 0,
-            }}
-            transition={{
-              duration: 0.6,
-              ease: "easeInOut",
-            }}
-            className="
-              pointer-events-none
-              absolute
-              z-30
-              left-[105px]
-              top-[130px]
-              h-[290px]
-              w-[180px]
-              select-none
-              object-contain
-            "
-          />
+          {/* =================================================
+              MACHINE IMAGE
+             ================================================= */}
 
-          {/* Image 1 Top Main Component */}
-          <motion.img
-            src={cystoscopy1}
-            alt="Cystoscopy main machine component"
-            draggable={false}
-            animate={{
-              y: isExploded ? -35 : 0,
-            }}
-            transition={{
-              duration: 0.6,
-              ease: "easeInOut",
-            }}
+          <div
             className="
-              pointer-events-none
-              absolute
-              z-50
-              left-[250px]
-              top-[45px]
-              h-[245px]
-              w-[260px]
-              select-none
-              object-contain
+              relative
+              z-10
+              h-[400px]
+              sm:h-[460px]
+              lg:h-[500px]
+              w-full
             "
-          />
+          >
+            {/* Original unexploded instrument set */}
+            <motion.img
+              src={CystoscopyMachineImg}
+              alt="RZ Medizintechnik High Definition Cystoscopy Set"
+              draggable={false}
+              animate={{
+                opacity: isExpanded ? 0 : 1,
+                scale: isExpanded ? 0.99 : 1,
+              }}
+              transition={{
+                duration: 0.35,
+              }}
+              className="
+                absolute
+                inset-0
+                h-full
+                w-full
+                object-contain
+                drop-shadow-[0_22px_28px_rgba(15,23,42,0.16)]
+              "
+            />
 
-          {/* Image 3 Middle Component */}
-          <motion.img
-            src={cystoscopy3}
-            alt="Cystoscopy middle machine component"
-            draggable={false}
-            animate={{
-              y: isExploded ? 8 : 0,
-            }}
-            transition={{
-              duration: 0.6,
-              ease: "easeInOut",
-            }}
-            className="
-              pointer-events-none
-              absolute
-              z-40
-              left-[255px]
-              top-[230px]
-              h-[230px]
-              w-[250px]
-              select-none
-              object-contain
-            "
-          />
-
-          {/* Image 4 Bottom Component */}
-          <motion.img
-            src={cystoscopy4}
-            alt="Cystoscopy lower machine component"
-            draggable={false}
-            animate={{
-              y: isExploded ? 45 : 0,
-            }}
-            transition={{
-              duration: 0.6,
-              ease: "easeInOut",
-            }}
-            className="
-              pointer-events-none
-              absolute
-              z-30
-              left-[250px]
-              top-[410px]
-              h-[235px]
-              w-[260px]
-              select-none
-              object-contain
-            "
-          />
-
-          {/* Image 5 Right Side Component */}
-          <motion.img
-            src={cystoscopy5}
-            alt="Cystoscopy right component"
-            draggable={false}
-            animate={{
-              x: isExploded ? 35 : 0,
-              y: isExploded ? 40 : 0,
-            }}
-            transition={{
-              duration: 0.6,
-              ease: "easeInOut",
-            }}
-            className="
-              pointer-events-none
-              absolute
-              z-30
-              left-[480px]
-              top-[460px]
-              h-[180px]
-              w-[180px]
-              select-none
-              object-contain
-            "
-          />
+            {/* Clipped exploded parts */}
+            {machineParts.map((part, index) => (
+              <motion.div
+                key={part.id}
+                initial={false}
+                animate={{
+                  x: isExpanded ? part.x : 0,
+                  y: isExpanded ? part.y : 0,
+                  opacity: isExpanded ? 1 : 0,
+                }}
+                transition={{
+                  duration: 0.5,
+                  delay: isExpanded ? index * 0.035 : 0,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                style={{
+                  clipPath: part.clipPath,
+                }}
+                className="
+                  absolute
+                  inset-0
+                  h-full
+                  w-full
+                "
+              >
+                <img
+                  src={CystoscopyMachineImg}
+                  alt=""
+                  draggable={false}
+                  className="
+                    absolute
+                    inset-0
+                    h-full
+                    w-full
+                    object-contain
+                    drop-shadow-[0_18px_24px_rgba(15,23,42,0.14)]
+                  "
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Mobile Explore Section */}
-      <div className="mx-auto mt-9 w-full max-w-[520px] px-4 lg:hidden">
+      {/* =====================================================
+          MOBILE FEATURES
+         ===================================================== */}
+
+      <div
+        className="
+          mx-auto
+          mt-6
+          w-full
+          max-w-[520px]
+          px-4
+          lg:hidden
+        "
+      >
+        {/* TAP BUTTON */}
         <motion.button
           type="button"
-          whileTap={{
-            scale: 0.96,
-          }}
           onClick={toggleMachine}
+          whileTap={{
+            scale: 0.97,
+          }}
           className="
             mx-auto
             flex
@@ -417,7 +545,7 @@ const CystoscopyMachine = () => {
             gap-2
             rounded-full
             border
-            border-[#1677FF]/20
+            border-[#1677FF]/15
             bg-[#1677FF]/[0.04]
             px-4
             py-2
@@ -440,17 +568,18 @@ const CystoscopyMachine = () => {
               text-white
               transition-transform
               duration-300
-              ${isExploded ? "rotate-45" : ""}
+              ${isExpanded ? "rotate-45" : ""}
             `}
           >
             +
           </span>
 
-          {isExploded ? "Hide machine details" : "Tap to explore machine"}
+          {isExpanded ? "Hide machine details" : "Tap to explore machine"}
         </motion.button>
 
+        {/* MOBILE DETAIL CARDS */}
         <AnimatePresence>
-          {isExploded && (
+          {isExpanded && (
             <motion.div
               initial={{
                 opacity: 0,
@@ -493,111 +622,6 @@ const CystoscopyMachine = () => {
         </AnimatePresence>
       </div>
     </section>
-  );
-};
-
-// Key Point Component
-const KeyPoint = ({
-  title,
-  description,
-  position,
-  side = "left",
-  lineWidth = 50,
-}) => {
-  return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        scale: 0.96,
-      }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-      }}
-      exit={{
-        opacity: 0,
-        scale: 0.96,
-      }}
-      transition={{
-        duration: 0.25,
-      }}
-      className={`
-        pointer-events-none
-        absolute
-        z-[100]
-        hidden
-        lg:flex
-        items-center
-        ${position}
-      `}
-    >
-      {side === "right" && (
-        <div className="flex items-center">
-          <div
-            className="h-[1px] bg-[#1677FF]"
-            style={{
-              width: `${lineWidth}px`,
-            }}
-          />
-
-          <div className="h-[7px] w-[7px] rounded-full bg-[#1677FF]" />
-        </div>
-      )}
-
-      <div
-        className="
-          min-w-[150px]
-          rounded-[9px]
-          border
-          border-[#2F80ED]/60
-          bg-white
-          px-2.5
-          py-2
-          shadow-[0_6px_20px_rgba(15,23,42,0.07)]
-        "
-      >
-        <div className="flex items-start gap-2">
-          <div
-            className="
-              mt-[1px]
-              flex
-              h-[24px]
-              w-[24px]
-              shrink-0
-              items-center
-              justify-center
-              rounded-md
-              bg-[#1677FF]/10
-            "
-          >
-            <div className="h-[11px] w-[3px] rotate-45 rounded-full bg-[#1677FF]" />
-          </div>
-
-          <div>
-            <h4 className="text-[10px] font-semibold leading-tight text-slate-900">
-              {title}
-            </h4>
-
-            <p className="mt-[2px] whitespace-nowrap text-[7px] leading-[1.4] text-slate-400">
-              {description}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {side === "left" && (
-        <div className="flex items-center">
-          <div className="h-[7px] w-[7px] rounded-full bg-[#1677FF]" />
-
-          <div
-            className="h-[1px] bg-[#1677FF]"
-            style={{
-              width: `${lineWidth}px`,
-            }}
-          />
-        </div>
-      )}
-    </motion.div>
   );
 };
 

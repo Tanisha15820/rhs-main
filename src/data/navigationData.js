@@ -57,15 +57,7 @@ export const SURGICAL_LASER_PRODUCTS_BY_SUBCATEGORY = {
     { name: "DK 30 WATT", path: "/dk30watt" },
     { name: "LITHO 35 WATT", path: "/litho35watt" },
     { name: "LITHO EVO 35 WATT", path: "/lithoevo35watt" },
-    {
-      name: "LATEST TECHNOLOGY MAGNETO 100 WATT",
-      path: "/urology-surgical-laser",
-    },
     { name: "CYBER HO 100 WATT", path: "/cyberho100watt" },
-    {
-      name: "LATEST TECHNOLOGY MAGNETO 150 WATT",
-      path: "/urology-surgical-laser",
-    },
     { name: "CYBER HO 150 WATT", path: "/cyberho150watt" },
     { name: "CYBER HO MAGNETO FAMILY", path: "/cyber-ho-magneto-family" },
   ],
@@ -156,6 +148,6 @@ export const URETERORENOSCOPE_PRODUCTS_BY_SUBCATEGORY = {
     { name: "Cystonephroscope", path: "/cystonephroscope" },
     { name: "Cystoscope", path: "/disposable-cystoscope" },
     { name: "Access sheath", path: "/access-sheath" },
-    { name: "Suction Pump", path: "/suction-pump" },
+    // { name: "Suction Pump", path: "/suction-pump" },
   ],
 };

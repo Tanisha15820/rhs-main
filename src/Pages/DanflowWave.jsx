@@ -36,7 +36,7 @@ import SEO from "../Components/SEO";
 
 import bannerBg from "../assets/images/smartxide_banner.png";
 
-import machineImage from "../assets/images/danflow-wave.png";
+import machineImage from "../assets/images/wave.png";
 import wave1 from "../assets/images/wave1.png";
 import wave2 from "../assets/images/wave2.png";
 import wave3 from "../assets/images/wave3.png";
@@ -506,11 +506,11 @@ const DanflowWave = () => {
 
               number="01"
 
-              type="CONTROL UNIT"
+              type="MAIN TRANSDUCER UNIT"
 
-              title="Wireless Display Module"
+              title="Weight-Cell Transducer Unit"
 
-              description="Top-mounted LCD control module for wireless uroflowmetry monitoring and data transmission."
+              description="Compact wireless weighing platform accurately records real-time Qmax, Qavg, and voided volume."
 
               image={wave1}
 
@@ -522,11 +522,11 @@ const DanflowWave = () => {
 
               number="02"
 
-              type="FLOW MEASUREMENT"
+              type="WIRELESS CONNECTIVITY"
 
-              title="Collection Funnel & Measuring Beaker"
+              title="USB Wireless Receiver Dongle"
 
-              description="The collection funnel directs urine into the measuring beaker for flow-volume assessment."
+              description="866 / 915 MHz plug-and-play USB transceiver provides up to 50m through-wall wireless range."
 
               image={wave2}
 
@@ -538,11 +538,11 @@ const DanflowWave = () => {
 
               number="03"
 
-              type="REPORTING"
+              type="STATUS INDICATOR"
 
-              title="Integrated Printer Module"
+              title="Optical LED Status Indicator"
 
-              description="Side-mounted thermal printer provides immediate test readings and uroflow reports."
+              description="Front-mounted status LED provides instant visual confirmation of power, link, and flow recording."
 
               image={wave3}
 
@@ -554,11 +554,11 @@ const DanflowWave = () => {
 
               number="04"
 
-              type="MOBILITY"
+              type="POWER & STORAGE"
 
-              title="Stainless Mobile Stand"
+              title="Battery & SD Storage Module"
 
-              description="Stainless-steel stand with caster wheels for convenient positioning during clinical use."
+              description="Water-resistant base houses a 2-year battery module and internal SD card for automatic backup."
 
               image={wave4}
 
@@ -672,11 +672,11 @@ const DanflowWave = () => {
 
                 number="01"
 
-                type="CONTROL UNIT"
+                type="MAIN TRANSDUCER UNIT"
 
-                title="Wireless Display Module"
+                title="Weight-Cell Transducer Unit"
 
-                description="Top-mounted LCD control module for wireless uroflowmetry monitoring and data transmission."
+                description="Compact wireless weighing platform accurately records real-time Qmax, Qavg, and voided volume."
 
                 image={wave1}
 
@@ -686,11 +686,11 @@ const DanflowWave = () => {
 
                 number="02"
 
-                type="FLOW MEASUREMENT"
+                type="WIRELESS CONNECTIVITY"
 
-                title="Collection Funnel & Measuring Beaker"
+                title="USB Wireless Receiver Dongle"
 
-                description="The collection funnel directs urine into the measuring beaker for flow-volume assessment."
+                description="866 / 915 MHz plug-and-play USB transceiver provides up to 50m through-wall wireless range."
 
                 image={wave2}
 
@@ -700,11 +700,11 @@ const DanflowWave = () => {
 
                 number="03"
 
-                type="REPORTING"
+                type="STATUS INDICATOR"
 
-                title="Integrated Printer Module"
+                title="Optical LED Status Indicator"
 
-                description="Side-mounted thermal printer provides immediate test readings and uroflow reports."
+                description="Front-mounted status LED provides instant visual confirmation of power, link, and flow recording."
 
                 image={wave3}
 
@@ -714,11 +714,11 @@ const DanflowWave = () => {
 
                 number="04"
 
-                type="MOBILITY"
+                type="POWER & STORAGE"
 
-                title="Stainless Mobile Stand"
+                title="Battery & SD Storage Module"
 
-                description="Stainless-steel stand with caster wheels for convenient positioning during clinical use."
+                description="Water-resistant base houses a 2-year battery module and internal SD card for automatic backup."
 
                 image={wave4}
 

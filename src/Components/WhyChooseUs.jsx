@@ -6,8 +6,8 @@ import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 
-import healthcareImage from "../assets/images/choose1.png";
-import familyImage from "../assets/images/choose2.png";
+import healthcareImage from "../assets/images/why1.jpeg";
+import familyImage from "../assets/images/why2.jpeg";
 import doctorImage from "../assets/images/choose3.png";
 
 const WhyChooseUs = () => {

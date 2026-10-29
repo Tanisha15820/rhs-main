@@ -17,21 +17,17 @@ import logo from "../assets/images/compressed_rhs_logo.png";
 
 const quickLinks = [
   { label: "Home", path: "/" },
-  { label: "Products", path: "/products" },
   { label: "Urology", path: "/urology" },
   { label: "ENT, Head & Neck Oncology", path: "/ent" },
   { label: "Gastro", path: "/gastro" },
   { label: "Blogs", path: "/blogs" },
-  { label: "Newsletter", path: "/newsletter" },
   { label: "Contact Us", path: "/contact" },
 ];
 
 const specialtyLinks = [
   { label: "Urology Surgical Lasers", path: "/urology-surgical-laser" },
   { label: "ENT CO2 Surgical Laser", path: "/ent-laser" },
-  { label: "Gastro Laser & Endoscopy", path: "/gastro-laser" },
   { label: "ESWL Lithotripsy Systems", path: "/urology-eswl" },
-  { label: "Urodynamics & Bladder Scanners", path: "/urology-urodynamic" },
   { label: "Endo Urology & Endoscopy", path: "/urology-endo" },
   { label: "Morcellator Systems", path: "/morcellator" },
   { label: "Flexible Video URS", path: "/flexible-video-ureterorenoscope" },
@@ -77,6 +73,7 @@ const Footer = () => {
                 support designed for hospitals and healthcare professionals across India.
               </p>
 
+
               {/* 24/7 Live Support Badge */}
               <div className="inline-flex items-center gap-2.5 rounded-full border border-emerald-200/80 bg-emerald-50/70 px-4 py-2 text-xs font-semibold text-emerald-800 shadow-xs">
                 <span className="relative flex h-2.5 w-2.5">
@@ -94,11 +91,6 @@ const Footer = () => {
 
                 <div className="flex items-center gap-2.5">
                   <SocialButton
-                    href="https://facebook.com"
-                    icon={<FacebookIcon sx={{ fontSize: 17 }} />}
-                    label="Facebook"
-                  />
-                  <SocialButton
                     href="https://linkedin.com"
                     icon={<LinkedInIcon sx={{ fontSize: 17 }} />}
                     label="LinkedIn"
@@ -107,11 +99,6 @@ const Footer = () => {
                     href="https://instagram.com"
                     icon={<InstagramIcon sx={{ fontSize: 17 }} />}
                     label="Instagram"
-                  />
-                  <SocialButton
-                    href="https://youtube.com"
-                    icon={<YouTubeIcon sx={{ fontSize: 17 }} />}
-                    label="YouTube"
                   />
                 </div>
               </div>
@@ -193,7 +180,7 @@ const Footer = () => {
 
                 <div className="min-w-0">
                   <p className="text-[12.5px] font-bold text-slate-800">
-                    Service Hub
+                    Service Cum Logistic Hub
                   </p>
 
                   <p className="mt-0.5 text-[12px] leading-relaxed text-slate-500">
@@ -248,15 +235,30 @@ const Footer = () => {
                 </a>
 
                 {/* Phone Numbers */}
-                <a
-                  href="tel:+918860086232"
-                  className="group flex items-center gap-2.5 text-[12.5px] text-slate-600 transition-colors hover:text-primary"
-                >
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                <div className="group flex items-center gap-2.5 text-[12.5px] text-slate-600">
+                  <a
+                    href="tel:+918860086232"
+                    aria-label="Call +91 8860086232"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-50 text-primary transition-colors group-hover:bg-primary group-hover:text-white"
+                  >
                     <PhoneOutlinedIcon sx={{ fontSize: 15 }} />
+                  </a>
+                  <div className="flex flex-wrap items-center gap-1 font-medium truncate">
+                    <a
+                      href="tel:+918860086232"
+                      className="transition-colors hover:text-primary"
+                    >
+                      +91 8860086232
+                    </a>
+                    <span className="text-slate-400">/</span>
+                    <a
+                      href="tel:+918448385864"
+                      className="transition-colors hover:text-primary"
+                    >
+                      +91 8448385864
+                    </a>
                   </div>
-                  <span className="font-medium truncate">+91 8860086232 / +91 8448385864</span>
-                </a>
+                </div>
               </div>
             </div>
           </div>

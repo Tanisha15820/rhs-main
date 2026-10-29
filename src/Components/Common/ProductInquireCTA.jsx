@@ -1,17 +1,47 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { PhoneCall, ShieldCheck } from "lucide-react";
 import { saveEnquiryProduct } from "../../utils/enquiryStorage";
 
 export default function ProductInquireCTA({
-  productName = "this Medical Equipment",
+  productName,
+  productTitle,
+  title,
+  machineId,
+  productId,
   productImage = "",
   subtitle = "Available for flexible daily, monthly, and per-procedure rental with certified technical and clinical support.",
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const resolvedMachineName =
+    productName || productTitle || title || "Medical Equipment";
+  const displayProductName =
+    productName || productTitle || title || "this Medical Equipment";
+  const resolvedMachineId =
+    machineId ||
+    productId ||
+    location.pathname.replace(/^\/+|\/+$/g, "") ||
+    resolvedMachineName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   const handleInquire = () => {
-    saveEnquiryProduct({ name: productName, image: productImage });
-    navigate("/product-enquiry");
+    saveEnquiryProduct({
+      id: resolvedMachineId,
+      machine_id: resolvedMachineId,
+      name: resolvedMachineName,
+      machine_name: resolvedMachineName,
+      image: productImage,
+    });
+    const search = `?machine_id=${encodeURIComponent(
+      resolvedMachineId
+    )}&machine_name=${encodeURIComponent(resolvedMachineName)}`;
+    navigate(`/product-enquiry${search}`, {
+      state: {
+        machine_id: resolvedMachineId,
+        machine_name: resolvedMachineName,
+        image: productImage,
+      },
+    });
   };
 
   return (
@@ -24,7 +54,7 @@ export default function ProductInquireCTA({
             </div>
             <div>
               <h4 className="text-base font-bold text-[#102A43]">
-                Rent {productName}
+                Rent {displayProductName}
               </h4>
               <p className="text-xs text-slate-600 mt-0.5 max-w-2xl">
                 {subtitle}

@@ -1,7 +1,8 @@
-// LocalStorage manager for Interactive Machine & Machine Products
+// Storage manager for Interactive Machine & Color Theme Presets
+// Backend is the single source of truth for all product records.
+// Obsolete product arrays and localStorage persistence have been completely removed.
 
 export const INTERACTIVE_MACHINE_KEY = "rhs_interactive_machine_v1";
-export const MACHINE_PRODUCTS_KEY = "rhs_machine_products_v1";
 
 export const DEFAULT_INTERACTIVE_MACHINE = {
   machineImage: "",
@@ -63,97 +64,10 @@ export const DEFAULT_INTERACTIVE_MACHINE = {
   ],
 };
 
-export const DEFAULT_MACHINE_PRODUCTS = [
-  {
-    id: "prod-1",
-    name: "SmartXide² Unique TRIO",
-    category: "Surgical",
-    image: "",
-    presetImageKey: "bipolar_plasma_generator",
-    link: "/smartxide",
-    bg: "bg-[#F1EDFF]",
-    iconBg: "bg-[#E4DAFF]",
-    iconColor: "text-[#7357E8]",
-    lineColor: "bg-[#7357E8]",
-    description:
-      "High-frequency plasma resection system for precise tissue coagulation.",
-  },
-  {
-    id: "prod-2",
-    name: "SmartXide Touch SurgiCO",
-    category: "Laser Surgery",
-    image: "",
-    presetImageKey: "diode_laser",
-    link: "/smartxide-touch",
-    bg: "bg-[#EDF9F7]",
-    iconBg: "bg-[#D5F2EC]",
-    iconColor: "text-[#1EAE9B]",
-    lineColor: "bg-[#1EAE9B]",
-    description:
-      "Dual-wavelength high power diode laser for multiple clinical procedures.",
-  },
-  {
-    id: "prod-3",
-    name: "Raykeen",
-    category: "Urology",
-    image: "",
-    presetImageKey: "cyber_blade",
-    link: "/raykeen-morcellator",
-    bg: "bg-[#EEF5FF]",
-    iconBg: "bg-[#D9E8FF]",
-    iconColor: "text-[#4285E8]",
-    lineColor: "bg-[#4285E8]",
-    description:
-      "Ultra-sharp precision surgical instrumentation for minimally invasive work.",
-  },
-  {
-    id: "prod-4",
-    name: "Multimed",
-    category: "Endoscopy",
-    image: "",
-    presetImageKey: "flexible_video_urs",
-    link: "/multimed",
-    bg: "bg-[#FFF1F5]",
-    iconBg: "bg-[#FFE0E9]",
-    iconColor: "text-[#F15B91]",
-    lineColor: "bg-[#F15B91]",
-    description:
-      "High-resolution digital flexible ureteroscope for superior clinical visual clarity.",
-  },
-  {
-    id: "prod-5",
-    name: "RZ Slim Laser Enucleation System",
-    category: "OR Imaging",
-    image: "",
-    presetImageKey: "endo_vision_set",
-    link: "/morcescope",
-    bg: "bg-[#F4F0FF]",
-    iconBg: "bg-[#E6DDFF]",
-    iconColor: "text-[#7357E8]",
-    lineColor: "bg-[#7357E8]",
-    description:
-      "Complete laparoscopic and endoscopic camera tower & cold light system.",
-  },
-  {
-    id: "prod-6",
-    name: "Bladder Scanner",
-    category: "Diagnostics",
-    image: "",
-    presetImageKey: "bladder_scanner",
-    link: "/bladder-scanner-details",
-    bg: "bg-[#EDF8FF]",
-    iconBg: "bg-[#DCEEFF]",
-    iconColor: "text-[#4285E8]",
-    lineColor: "bg-[#4285E8]",
-    description:
-      "Non-invasive 3D ultrasound device for quick urinary volume assessment.",
-  },
-];
-
 // Color theme presets for products
 export const THEME_PRESETS = [
   {
-    id: "purple",
+    id: "royal-purple",
     label: "Royal Purple",
     bg: "bg-[#F1EDFF]",
     iconBg: "bg-[#E4DAFF]",
@@ -162,7 +76,7 @@ export const THEME_PRESETS = [
     badgeBg: "#7357E8",
   },
   {
-    id: "teal",
+    id: "medical-teal",
     label: "Medical Teal",
     bg: "bg-[#EDF9F7]",
     iconBg: "bg-[#D5F2EC]",
@@ -171,7 +85,7 @@ export const THEME_PRESETS = [
     badgeBg: "#1EAE9B",
   },
   {
-    id: "blue",
+    id: "rhs-sky-blue",
     label: "RHS Sky Blue",
     bg: "bg-[#EEF5FF]",
     iconBg: "bg-[#D9E8FF]",
@@ -180,7 +94,7 @@ export const THEME_PRESETS = [
     badgeBg: "#4285E8",
   },
   {
-    id: "pink",
+    id: "surgical-rose",
     label: "Surgical Rose",
     bg: "bg-[#FFF1F5]",
     iconBg: "bg-[#FFE0E9]",
@@ -190,6 +104,38 @@ export const THEME_PRESETS = [
   },
 ];
 
+export const COLOR_PALETTES = {
+  "royal-purple": THEME_PRESETS[0],
+  "medical-teal": THEME_PRESETS[1],
+  "rhs-sky-blue": THEME_PRESETS[2],
+  "surgical-rose": THEME_PRESETS[3],
+  // Legacy aliases
+  purple: THEME_PRESETS[0],
+  teal: THEME_PRESETS[1],
+  blue: THEME_PRESETS[2],
+  pink: THEME_PRESETS[3],
+};
+
+export const normalizePalette = (palette) => {
+  if (palette === "purple") return "royal-purple";
+  if (palette === "teal") return "medical-teal";
+  if (palette === "blue") return "rhs-sky-blue";
+  if (palette === "pink") return "surgical-rose";
+  if (
+    ["royal-purple", "medical-teal", "rhs-sky-blue", "surgical-rose"].includes(
+      palette
+    )
+  ) {
+    return palette;
+  }
+  return "rhs-sky-blue";
+};
+
+export const getThemeStyles = (palette) => {
+  const norm = normalizePalette(palette);
+  return COLOR_PALETTES[norm] || THEME_PRESETS[2];
+};
+
 // ================= 1. INTERACTIVE SHOWCASE MACHINE METHODS =================
 
 export const getInteractiveMachineData = () => {
@@ -198,8 +144,10 @@ export const getInteractiveMachineData = () => {
     if (!raw) return { ...DEFAULT_INTERACTIVE_MACHINE };
     const parsed = JSON.parse(raw);
     return {
-      ...DEFAULT_INTERACTIVE_MACHINE,
-      ...parsed,
+      machineImage: parsed.machineImage || DEFAULT_INTERACTIVE_MACHINE.machineImage,
+      title: parsed.title || DEFAULT_INTERACTIVE_MACHINE.title,
+      subtitle: parsed.subtitle || DEFAULT_INTERACTIVE_MACHINE.subtitle,
+      badgeText: parsed.badgeText || DEFAULT_INTERACTIVE_MACHINE.badgeText,
       parts: Array.isArray(parsed.parts)
         ? parsed.parts
         : DEFAULT_INTERACTIVE_MACHINE.parts,
@@ -225,60 +173,6 @@ export const saveInteractiveMachineData = (data) => {
   }
 };
 
-export const addMachineHotspot = (hotspot) => {
-  const current = getInteractiveMachineData();
-  const newPart = {
-    id: `part-${Date.now()}`,
-    title: hotspot.title || "New Feature Point",
-    description:
-      hotspot.description ||
-      "Feature description for this medical machine part.",
-    icon: hotspot.icon || "Sparkles",
-    top: hotspot.top || "50%",
-    left: hotspot.left || "50%",
-    cardPosition: hotspot.cardPosition || "right",
-  };
-  const updated = {
-    ...current,
-    parts: [...current.parts, newPart],
-  };
-  saveInteractiveMachineData(updated);
-  return updated;
-};
-
-export const updateMachineHotspot = (id, updatedFields) => {
-  const current = getInteractiveMachineData();
-  const updatedParts = current.parts.map((p) =>
-    p.id === id ? { ...p, ...updatedFields } : p,
-  );
-  const updated = {
-    ...current,
-    parts: updatedParts,
-  };
-  saveInteractiveMachineData(updated);
-  return updated;
-};
-
-export const deleteMachineHotspot = (id) => {
-  const current = getInteractiveMachineData();
-  if (current.parts.length <= 1) {
-    return {
-      success: false,
-      message: "At least one hotspot point must remain on the machine.",
-      data: current,
-    };
-  }
-  const updated = {
-    ...current,
-    parts: current.parts.filter((p) => p.id !== id),
-  };
-  saveInteractiveMachineData(updated);
-  return {
-    success: true,
-    data: updated,
-  };
-};
-
 export const resetInteractiveMachineData = () => {
   try {
     localStorage.removeItem(INTERACTIVE_MACHINE_KEY);
@@ -294,124 +188,7 @@ export const resetInteractiveMachineData = () => {
   }
 };
 
-// ================= 2. MACHINE PRODUCTS CATALOG METHODS =================
-
-export const getMachineProducts = () => {
-  try {
-    const raw = localStorage.getItem(MACHINE_PRODUCTS_KEY);
-    if (!raw) return DEFAULT_MACHINE_PRODUCTS;
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.map((item) => {
-        if (!item.link) {
-          const match = DEFAULT_MACHINE_PRODUCTS.find(
-            (d) =>
-              d.id === item.id ||
-              d.name === item.name ||
-              d.presetImageKey === item.presetImageKey,
-          );
-          if (match?.link) {
-            return { ...item, link: match.link };
-          }
-        }
-        return item;
-      });
-    }
-    return DEFAULT_MACHINE_PRODUCTS;
-  } catch (err) {
-    console.error("Error loading machine products:", err);
-    return DEFAULT_MACHINE_PRODUCTS;
-  }
-};
-
-export const saveMachineProducts = (products) => {
-  try {
-    localStorage.setItem(MACHINE_PRODUCTS_KEY, JSON.stringify(products));
-    window.dispatchEvent(
-      new CustomEvent("rhs_machines_updated", {
-        detail: { type: "products", data: products },
-      }),
-    );
-    return true;
-  } catch (err) {
-    console.error("Error saving machine products:", err);
-    return false;
-  }
-};
-
-export const addMachineProduct = (product) => {
-  const current = getMachineProducts();
-  const theme =
-    THEME_PRESETS.find((t) => t.id === product.themeId) || THEME_PRESETS[2];
-  const newProd = {
-    id: `prod-${Date.now()}`,
-    name: product.name || "New Medical Machine",
-    category: product.category || "Healthcare Equipment",
-    image: product.image || "",
-    presetImageKey: product.presetImageKey || "",
-    link: product.link || "",
-    bg: theme.bg,
-    iconBg: theme.iconBg,
-    iconColor: theme.iconColor,
-    lineColor: theme.lineColor,
-    description:
-      product.description ||
-      "High-precision medical machinery designed for clinical efficiency.",
-  };
-  const updated = [...current, newProd];
-  saveMachineProducts(updated);
-  return updated;
-};
-
-export const updateMachineProduct = (id, updatedFields) => {
-  const current = getMachineProducts();
-  let themeObj = {};
-  if (updatedFields.themeId) {
-    const found = THEME_PRESETS.find((t) => t.id === updatedFields.themeId);
-    if (found) {
-      themeObj = {
-        bg: found.bg,
-        iconBg: found.iconBg,
-        iconColor: found.iconColor,
-        lineColor: found.lineColor,
-      };
-    }
-  }
-  const updated = current.map((p) =>
-    p.id === id ? { ...p, ...updatedFields, ...themeObj } : p,
-  );
-  saveMachineProducts(updated);
-  return updated;
-};
-
-export const deleteMachineProduct = (id) => {
-  const current = getMachineProducts();
-  if (current.length <= 1) {
-    return {
-      success: false,
-      message: "At least one medical product must remain visible.",
-      products: current,
-    };
-  }
-  const updated = current.filter((p) => p.id !== id);
-  saveMachineProducts(updated);
-  return {
-    success: true,
-    products: updated,
-  };
-};
-
-export const resetMachineProducts = () => {
-  try {
-    localStorage.removeItem(MACHINE_PRODUCTS_KEY);
-    window.dispatchEvent(
-      new CustomEvent("rhs_machines_updated", {
-        detail: { type: "products", data: DEFAULT_MACHINE_PRODUCTS },
-      }),
-    );
-    return DEFAULT_MACHINE_PRODUCTS;
-  } catch (err) {
-    console.error("Error resetting machine products:", err);
-    return DEFAULT_MACHINE_PRODUCTS;
-  }
-};
+// Safeguard: Remove obsolete product localStorage persistence key
+try {
+  localStorage.removeItem("rhs_machine_products_v1");
+} catch {}

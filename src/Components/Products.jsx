@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import BipolarPlasmaGenerator from "../assets/images/SmartXide2Trio.png";
-import DiodeLaser from "../assets/images/SmartXideTouchSurgiCO.png";
-import CyberBlade from "../assets/images/raykeen.png";
-import BladderScanner from "../assets/images/roboflex_avicenna.png";
-import FlexibleVideoURS from "../assets/images/multimed.png";
-import EndoVisionSet from "../assets/images/morcescope.png";
-import { getMachineProducts } from "../utils/machineStorage";
-
-const PRESET_MAP = {
-  bipolar_plasma_generator: BipolarPlasmaGenerator,
-  diode_laser: DiodeLaser,
-  cyber_blade: CyberBlade,
-  bladder_scanner: BladderScanner,
-  flexible_video_urs: FlexibleVideoURS,
-  endo_vision_set: EndoVisionSet,
-};
+import { fetchPublicProducts } from "../services/productService";
+import { getThemeStyles } from "../utils/machineStorage";
 
 const PRODUCT_LINK_MAP = {
   // SmartXide Trio
@@ -43,6 +29,7 @@ const PRODUCT_LINK_MAP = {
 
   // Bladder Scanner
   "bladder scanner": "/bladder-scanner-details",
+  "scanner bladder": "/bladder-scanner-details",
   "mmt bladder scanner": "/bladder-scanner-details",
 
   // Lasers
@@ -96,15 +83,6 @@ const PRODUCT_LINK_MAP = {
   "access sheath": "/access-sheath",
 };
 
-const PRESET_KEY_MAP = {
-  bipolar_plasma_generator: "/smartxide",
-  diode_laser: "/smartxide-touch",
-  cyber_blade: "/raykeen-morcellator",
-  flexible_video_urs: "/multimed",
-  endo_vision_set: "/morcescope",
-  bladder_scanner: "/bladder-scanner-details",
-};
-
 const getProductLink = (product) => {
   if (product.link) return product.link;
   if (product.path) return product.path;
@@ -120,40 +98,53 @@ const getProductLink = (product) => {
     }
   }
 
-  if (product.presetImageKey && PRESET_KEY_MAP[product.presetImageKey]) {
-    return PRESET_KEY_MAP[product.presetImageKey];
-  }
-
   return "/products";
 };
 
 const Products = () => {
-  const [productsData, setProductsData] = useState(getMachineProducts);
+  const [productsData, setProductsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Fetch products from backend GET /api/products
   useEffect(() => {
-    const handleUpdate = () => {
-      setProductsData(getMachineProducts());
-    };
+    let isMounted = true;
+    setIsLoading(true);
+    setError(null);
 
-    window.addEventListener("rhs_machines_updated", handleUpdate);
-    window.addEventListener("storage", handleUpdate);
+    fetchPublicProducts()
+      .then((data) => {
+        if (isMounted) {
+          setProductsData(data);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error("Failed to fetch public products:", err);
+          setError(err.message || "Unable to load healthcare products");
+          setProductsData([]);
+          setIsLoading(false);
+        }
+      });
 
     return () => {
-      window.removeEventListener("rhs_machines_updated", handleUpdate);
-      window.removeEventListener("storage", handleUpdate);
+      isMounted = false;
     };
   }, []);
 
-  const products = productsData.map((item) => ({
-    ...item,
-    link: getProductLink(item),
-    image:
-      item.image || PRESET_MAP[item.presetImageKey] || BipolarPlasmaGenerator,
-    bg: item.bg || "bg-[#EEF5FF]",
-    iconBg: item.iconBg || "bg-[#D9E8FF]",
-    iconColor: item.iconColor || "text-[#4285E8]",
-    lineColor: item.lineColor || "bg-[#4285E8]",
-  }));
+  const products = productsData.map((item) => {
+    const theme = getThemeStyles(item.color_palette);
+    return {
+      ...item,
+      link: getProductLink(item),
+      image: item.image_url || item.image || "",
+      bg: theme.bg || "bg-[#EEF5FF]",
+      iconBg: theme.iconBg || "bg-[#D9E8FF]",
+      iconColor: theme.iconColor || "text-[#4285E8]",
+      lineColor: theme.lineColor || "bg-[#4285E8]",
+    };
+  });
 
   const [startIndex, setStartIndex] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(5);
@@ -168,7 +159,7 @@ const Products = () => {
         setItemsToShow(5);
       }
     };
-    
+
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -217,11 +208,9 @@ const Products = () => {
         <div className="mb-10 text-center">
           <div className="mb-3 flex items-center justify-center gap-3">
             <span className="h-px w-7 bg-[#20B7AE]" />
-
             <span className="text-xs font-bold uppercase tracking-wider text-[#20AFA7]">
               Our Products
             </span>
-
             <span className="h-px w-7 bg-[#20B7AE]" />
           </div>
 
@@ -239,139 +228,208 @@ const Products = () => {
           </p>
         </div>
 
+        {/* Loading state skeleton */}
+        {isLoading && (
+          <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 w-full py-4">
+            {[...Array(itemsToShow)].map((_, i) => (
+              <div
+                key={i}
+                className={`shrink-0 rounded-2xl border border-white/90 bg-white/60 animate-pulse ${
+                  i === Math.floor(itemsToShow / 2)
+                    ? "w-[85%] sm:w-[45%] md:w-[30%] lg:w-[23%] min-w-[205px] h-[330px]"
+                    : "hidden sm:block sm:w-[25%] md:w-[20%] lg:w-[18.5%] min-w-[160px] h-[285px]"
+                }`}
+              >
+                <div className="flex h-full flex-col items-center justify-center p-6 space-y-4">
+                  <div className="h-28 w-28 rounded-full bg-slate-200/60" />
+                  <div className="h-4 w-3/4 rounded-md bg-slate-200/60" />
+                  <div className="h-3 w-1/2 rounded-md bg-slate-200/40" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Error state */}
+        {!isLoading && error && (
+          <div className="mx-auto max-w-md rounded-2xl border border-slate-200/80 bg-white/70 backdrop-blur-xs p-6 text-center shadow-xs">
+            <p className="text-sm font-semibold text-slate-700">
+              Unable to load healthcare products
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              Please check back shortly or explore our specialty categories.
+            </p>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && !error && products.length === 0 && (
+          <div className="mx-auto max-w-md rounded-2xl border border-slate-200/80 bg-white/70 backdrop-blur-xs p-6 text-center shadow-xs">
+            <p className="text-sm font-semibold text-slate-700">
+              No healthcare products currently available
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              Our catalog is being updated with the latest clinical equipment.
+            </p>
+          </div>
+        )}
+
         {/* Carousel */}
-        <div className="relative">
-          {/* Left Arrow */}
-          <button
-            type="button"
-            onClick={prevSlide}
-            disabled={startIndex === 0}
-            className="absolute -left-2 top-1/2 z-30 flex h-9 w-9
-              -translate-y-1/2 items-center justify-center rounded-full
-              border border-[#E3EAF5] bg-white text-[#16A7B0]
-              shadow-sm transition-all duration-300
-              hover:-translate-x-1 hover:shadow-md
-              disabled:cursor-not-allowed disabled:opacity-40
-              sm:-left-5"
-          >
-            <span className="text-xl leading-none">‹</span>
-          </button>
+        {!isLoading && !error && products.length > 0 && (
+          <div className="relative">
+            {/* Left Arrow */}
+            <button
+              type="button"
+              onClick={prevSlide}
+              disabled={products.length <= itemsToShow || startIndex === 0}
+              className="absolute -left-2 top-1/2 z-30 flex h-9 w-9
+                -translate-y-1/2 items-center justify-center rounded-full
+                border border-[#E3EAF5] bg-white text-[#16A7B0]
+                shadow-sm transition-all duration-300
+                hover:-translate-x-1 hover:shadow-md
+                disabled:cursor-not-allowed disabled:opacity-40
+                sm:-left-5 cursor-pointer"
+            >
+              <span className="text-xl leading-none">‹</span>
+            </button>
 
-          {/* Right Arrow */}
-          <button
-            type="button"
-            onClick={nextSlide}
-            disabled={startIndex >= products.length - 5}
-            className="absolute -right-2 top-1/2 z-30 flex h-9 w-9
-              -translate-y-1/2 items-center justify-center rounded-full
-              border border-[#E3EAF5] bg-white text-[#16A7B0]
-              shadow-sm transition-all duration-300
-              hover:translate-x-1 hover:shadow-md
-              disabled:cursor-not-allowed disabled:opacity-40
-              sm:-right-5"
-          >
-            <span className="text-xl leading-none">›</span>
-          </button>
+            {/* Right Arrow */}
+            <button
+              type="button"
+              onClick={nextSlide}
+              disabled={
+                products.length <= itemsToShow || startIndex >= maxStartIndex
+              }
+              className="absolute -right-2 top-1/2 z-30 flex h-9 w-9
+                -translate-y-1/2 items-center justify-center rounded-full
+                border border-[#E3EAF5] bg-white text-[#16A7B0]
+                shadow-sm transition-all duration-300
+                hover:translate-x-1 hover:shadow-md
+                disabled:cursor-not-allowed disabled:opacity-40
+                sm:-right-5 cursor-pointer"
+            >
+              <span className="text-xl leading-none">›</span>
+            </button>
 
-          {/* Cards */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 w-full">
-            {visibleProducts.map((product, index) => {
-              const isCenter = itemsToShow === 1 ? true : itemsToShow === 3 ? index === 1 : index === 2;
-              const link = getProductLink(product);
+            {/* Cards */}
+            <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4 w-full">
+              {visibleProducts.map((product, index) => {
+                const isCenter =
+                  itemsToShow === 1
+                    ? true
+                    : itemsToShow === 3
+                    ? index === 1
+                    : index === 2;
+                const link = getProductLink(product);
 
-              return (
-                <Link
-                  key={`${product.name}-${startIndex}-${index}`}
-                  to={link}
-                  onClick={() => window.scrollTo({ top: 0, left: 0, behavior: "instant" })}
-                  className={`
-                    group relative shrink-0 overflow-hidden rounded-2xl
-                    border border-white/90 block cursor-pointer
-                    ${product.bg}
-
-                    ${
-                      isCenter
-                        ? "w-[85%] sm:w-[45%] md:w-[30%] lg:w-[23%] min-w-[205px] h-[330px] -translate-y-2 shadow-[0_18px_45px_rgba(55,75,110,0.15)]"
-                        : "hidden sm:block sm:w-[25%] md:w-[20%] lg:w-[18.5%] min-w-[160px] h-[285px] shadow-[0_8px_30px_rgba(55,75,110,0.07)]"
+                return (
+                  <Link
+                    key={`${product.id || product.name}-${startIndex}-${index}`}
+                    to={link}
+                    onClick={() =>
+                      window.scrollTo({ top: 0, left: 0, behavior: "instant" })
                     }
-
-                    transition-all duration-500 ease-out
-                    hover:-translate-y-2.5
-                    hover:shadow-[0_20px_50px_rgba(37,99,235,0.18)]
-                  `}
-                >
-                  {/* Soft Decorative Circle */}
-                  <div
                     className={`
-                      absolute left-1/2 top-8 -translate-x-1/2
-                      rounded-full opacity-50 blur-[1px]
-                      ${product.iconBg}
-                      ${isCenter ? "h-40 w-40" : "h-32 w-32"}
-                    `}
-                  />
+                      group relative shrink-0 overflow-hidden rounded-2xl
+                      border border-white/90 block cursor-pointer
+                      ${product.bg}
 
-                  {/* Image */}
-                  <div
-                    className={`
-                      relative flex items-center justify-center
-                      ${isCenter ? "h-[220px]" : "h-[185px]"}
+                      ${
+                        isCenter
+                          ? "w-[85%] sm:w-[45%] md:w-[30%] lg:w-[23%] min-w-[205px] h-[330px] -translate-y-2 shadow-[0_18px_45px_rgba(55,75,110,0.15)]"
+                          : "hidden sm:block sm:w-[25%] md:w-[20%] lg:w-[18.5%] min-w-[160px] h-[285px] shadow-[0_8px_30px_rgba(55,75,110,0.07)]"
+                      }
+
+                      transition-all duration-500 ease-out
+                      hover:-translate-y-2.5
+                      hover:shadow-[0_20px_50px_rgba(37,99,235,0.18)]
                     `}
                   >
-                    <img
-                      src={product.image}
-                      alt={product.name}
+                    {/* Soft Decorative Circle */}
+                    <div
                       className={`
-                        relative z-10 object-contain
-                        transition-transform duration-500
-                        group-hover:scale-105
-                        ${
-                          isCenter
-                            ? "max-h-[190px] max-w-[88%]"
-                            : "max-h-[160px] max-w-[85%]"
-                        }
+                        absolute left-1/2 top-8 -translate-x-1/2
+                        rounded-full opacity-50 blur-[1px]
+                        ${product.iconBg}
+                        ${isCenter ? "h-40 w-40" : "h-32 w-32"}
                       `}
                     />
-                  </div>
 
-                  {/* Bottom Content */}
-                  <div className="relative z-10 px-3 pb-3 text-center">
-                    <h3
+                    {/* Image */}
+                    <div
                       className={`
-                        mt-1 font-semibold text-[#253653] transition-colors duration-200 group-hover:text-primary
-                        ${isCenter ? "text-sm" : "text-[11px] sm:text-xs"}
+                        relative flex items-center justify-center
+                        ${isCenter ? "h-[220px]" : "h-[185px]"}
                       `}
                     >
-                      {product.name}
-                    </h3>
-                    <div className="mt-1 flex items-center justify-center gap-1 text-[11px] font-bold text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <span>View Details</span>
-                      <span className="text-xs transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+                      {product.image ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className={`
+                            relative z-10 object-contain
+                            transition-transform duration-500
+                            group-hover:scale-105
+                            ${
+                              isCenter
+                                ? "max-h-[190px] max-w-[88%]"
+                                : "max-h-[160px] max-w-[85%]"
+                            }
+                          `}
+                        />
+                      ) : (
+                        <div className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full bg-white/40 text-slate-400">
+                          <span className="text-xs font-semibold">RHS</span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
+
+                    {/* Bottom Content */}
+                    <div className="relative z-10 px-3 pb-3 text-center">
+                      <h3
+                        className={`
+                          mt-1 font-semibold text-[#253653] transition-colors duration-200 group-hover:text-primary
+                          ${isCenter ? "text-sm" : "text-[11px] sm:text-xs"}
+                        `}
+                      >
+                        {product.name}
+                      </h3>
+                      <div className="mt-1 flex items-center justify-center gap-1 text-[11px] font-bold text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <span>View Details</span>
+                        <span className="text-xs transition-transform duration-200 group-hover:translate-x-0.5">
+                          →
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Carousel Indicators */}
-        <div className="mt-7 flex justify-center gap-2">
-          {products.slice(0, products.length - (itemsToShow - 1)).map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => setStartIndex(index)}
-              className={`
-                h-1.5 rounded-full transition-all duration-300
-                ${
-                  startIndex === index
-                    ? "w-5 bg-[#20B7AE]"
-                    : "w-1.5 bg-[#CBD5E1]"
-                }
-              `}
-            />
-          ))}
-        </div>
+        {!isLoading && !error && products.length > itemsToShow && (
+          <div className="mt-7 flex justify-center gap-2">
+            {products
+              .slice(0, products.length - (itemsToShow - 1))
+              .map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => setStartIndex(index)}
+                  className={`
+                  h-1.5 rounded-full transition-all duration-300 cursor-pointer
+                  ${
+                    startIndex === index
+                      ? "w-5 bg-[#20B7AE]"
+                      : "w-1.5 bg-[#CBD5E1]"
+                  }
+                `}
+                />
+              ))}
+          </div>
+        )}
       </div>
     </section>
   );

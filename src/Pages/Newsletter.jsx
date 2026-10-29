@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Check,
@@ -15,6 +15,7 @@ import {
   ChevronRight,
   X,
   ArrowRight,
+  ArrowLeft,
   BookOpen,
   Clock,
   FileText,
@@ -30,12 +31,9 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import SEO from "../Components/SEO";
 import newsletterBannerBg from "../assets/images/newsletter_banner.png";
-import rhsLogo from "../assets/images/compressed_rhs_logo.png";
 
 import {
-  NEWSLETTER_CATEGORIES,
   NEWSLETTER_EDITIONS,
-  SUBSCRIBER_BENEFITS,
 } from "../data/newsletterData";
 
 import {
@@ -44,46 +42,43 @@ import {
   toggleBookmarkEdition,
 } from "../utils/newsletterStorage";
 
-const BENEFIT_ICONS = {
-  FileText: <FileText className="h-6 w-6 text-primary" />,
-  Zap: <Zap className="h-6 w-6 text-primary" />,
-  GraduationCap: <GraduationCap className="h-6 w-6 text-primary" />,
-  Headset: <Headset className="h-6 w-6 text-primary" />,
-};
-
 const MEDICAL_ROLES = [
-  "Consultant Urologist",
-  "ENT / Head & Neck Surgeon",
-  "Gastroenterologist / Endoscopist",
-  "General / Laparoscopic Surgeon",
   "Hospital Medical Director / CEO",
-  "Biomedical Engineer / OT In-charge",
   "Medical Procurement / Purchase Head",
-  "Clinic Owner / Fellow / Resident",
+  "Biomedical Engineer / OT In-charge",
+  "Consultant Surgeon / Department Head",
+  "Clinic Owner / Managing Partner",
+  "Hospital Operations Manager",
+  "OT & Surgical Facility Administrator",
 ];
 
 const SPECIALTY_OPTIONS = [
-  "Urology & Surgical Lasers (Holmium/Thulium)",
-  "Robotic Surgery & Flexible URS",
-  "ENT CO2 Surgical Lasers & Oncology",
-  "Urodynamics & Ultrasonic Bladder Scanners",
-  "Equipment Rental, Leasing & Hospital ROI",
+  "Surgical Lasers on Rent (Holmium & Thulium)",
+  "Flexible Video Endoscopy & Laparoscopy Towers",
+  "Robotic Tele-Surgery Consoles & Per-Case Leases",
+  "Diagnostic Urodynamics & 3D Bladder Scanners",
+  "Zero-CAPEX Equipment Leases & Hospital ROI",
 ];
 
 export default function Newsletter() {
-  // Filter & Search states
-  const [activeCategory, setActiveCategory] = useState("All Editions");
+  // Search & bookmark states
   const [searchQuery, setSearchQuery] = useState("");
   const [bookmarkedIds, setBookmarkedIds] = useState(() => getBookmarkedEditions());
+
+  // Carousel scroll ref & state (matching blogs page carousel)
+  const scrollContainerRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [scrollIndex, setScrollIndex] = useState(0);
 
   // Subscription Form states
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    role: "Consultant Urologist",
+    role: "Hospital Medical Director / CEO",
     institution: "",
-    specialties: ["Urology & Surgical Lasers (Holmium/Thulium)"],
-    frequency: "Monthly Comprehensive Dispatch",
+    specialties: ["Surgical Lasers on Rent (Holmium & Thulium)"],
+    frequency: "Monthly Equipment Rental Digest",
   });
   const [submitting, setSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -104,22 +99,78 @@ export default function Newsletter() {
     };
   }, []);
 
-  // Filtered editions
+  // Filtered editions based on search
   const filteredEditions = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return NEWSLETTER_EDITIONS;
     return NEWSLETTER_EDITIONS.filter((edition) => {
-      const matchesCategory =
-        activeCategory === "All Editions" || edition.category === activeCategory;
-      const query = searchQuery.toLowerCase().trim();
-      const matchesSearch =
-        !query ||
+      return (
         edition.title.toLowerCase().includes(query) ||
         edition.subtitle.toLowerCase().includes(query) ||
         edition.summary.toLowerCase().includes(query) ||
-        edition.tags.some((tag) => tag.toLowerCase().includes(query));
-
-      return matchesCategory && matchesSearch;
+        edition.tags.some((tag) => tag.toLowerCase().includes(query))
+      );
     });
-  }, [activeCategory, searchQuery]);
+  }, [searchQuery]);
+
+  // Update carousel scroll button availability
+  const checkScrollBounds = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+
+    // Compute approximate active card index for indicators
+    const firstCard = el.querySelector("[data-edition-card]");
+    if (firstCard) {
+      const cardWidth = firstCard.offsetWidth + 24; // width + gap
+      const idx = Math.round(scrollLeft / cardWidth);
+      setScrollIndex(Math.max(0, Math.min(idx, filteredEditions.length - 1)));
+    }
+  }, [filteredEditions.length]);
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    checkScrollBounds();
+    el.addEventListener("scroll", checkScrollBounds, { passive: true });
+    window.addEventListener("resize", checkScrollBounds);
+
+    return () => {
+      el.removeEventListener("scroll", checkScrollBounds);
+      window.removeEventListener("resize", checkScrollBounds);
+    };
+  }, [checkScrollBounds]);
+
+  // Scroll prev (left) by 1 card step
+  const handleScrollLeft = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const firstCard = el.querySelector("[data-edition-card]");
+    const step = firstCard ? firstCard.offsetWidth + 24 : el.clientWidth;
+    el.scrollBy({ left: -step, behavior: "smooth" });
+  };
+
+  // Scroll next (right) by 1 card step
+  const handleScrollRight = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const firstCard = el.querySelector("[data-edition-card]");
+    const step = firstCard ? firstCard.offsetWidth + 24 : el.clientWidth;
+    el.scrollBy({ left: step, behavior: "smooth" });
+  };
+
+  // Scroll directly to a specific card index
+  const scrollToCardIndex = (index) => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const firstCard = el.querySelector("[data-edition-card]");
+    if (firstCard) {
+      const step = firstCard.offsetWidth + 24;
+      el.scrollTo({ left: index * step, behavior: "smooth" });
+    }
+  };
 
   const featuredEdition = NEWSLETTER_EDITIONS.find((ed) => ed.featured) || NEWSLETTER_EDITIONS[0];
 
@@ -176,16 +227,16 @@ export default function Newsletter() {
       saveSubscription(formData);
       setSubmitting(false);
       setIsSubscribed(true);
-      showToast("Successfully subscribed to Reinforce Pulse!");
+      showToast("Successfully subscribed to RHS Equipment Rental Updates!");
     }, 900);
   };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 antialiased selection:bg-primary/20 selection:text-primary-dark">
       <SEO
-        title="Reinforce Pulse | Surgical Lasers & Medical Equipment Newsletter"
-        description="Subscribe to Reinforce Pulse: The premier surgical laser, endo-urology, urodynamic diagnostics, and biomedical leasing dispatch for hospitals and surgeons across India."
-        keywords="surgical laser newsletter, urology medical digest, thulium fiber laser clinical trials, medical equipment leasing updates, Reinforce Healthcare Services"
+        title="RHS Newsletter | Medical Equipment & Machinery Rentals for Hospitals"
+        description="Subscribe to Reinforce Healthcare Services (RHS) Equipment Rental Newsletter. Monthly catalogs and updates on surgical lasers, endoscopy towers, biomedical maintenance SLAs, and zero-CAPEX machine rentals for hospitals and medical facilities across India."
+        keywords="medical equipment rental newsletter, hospital machinery rentals, surgical laser on rent, endoscopy tower rental, Reinforce Healthcare Services, RHS medical equipment leases"
       />
 
       {/* Floating Toast Notification */}
@@ -266,60 +317,19 @@ export default function Newsletter() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
 
-              {/* Edition Floating Badges */}
-              <div className="absolute left-6 top-6 flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/95 px-3.5 py-1.5 text-xs font-black uppercase tracking-wider text-primary shadow-md backdrop-blur-md">
-                  ★ FEATURED DISPATCH
-                </span>
-                <span className="rounded-full bg-slate-900/80 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
-                  {featuredEdition.vol}
-                </span>
-              </div>
-
               <div className="absolute bottom-6 left-6 right-6 text-white">
                 <p className="text-xs font-semibold tracking-wider text-sky-300 uppercase">
                   Published: {featuredEdition.date}
                 </p>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="rounded-md bg-white/20 px-2 py-0.5 text-[11px] font-medium backdrop-blur-xs">
-                    {featuredEdition.category}
-                  </span>
-                  <span className="text-[11px] text-slate-300">• {featuredEdition.pages}</span>
-                </div>
               </div>
             </div>
 
             {/* Detailed Content Side */}
             <div className="flex flex-col justify-between p-6 sm:p-8 lg:col-span-7 lg:p-10">
               <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
-                    <Sparkles className="h-4 w-4" />
-                    <span>Clinical Benchmarking Study</span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={(e) => handleBookmarkClick(featuredEdition.id, e)}
-                      title="Bookmark this edition"
-                      className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-full transition ${
-                        bookmarkedIds.includes(featuredEdition.id)
-                          ? "bg-primary text-white"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
-                    >
-                      <Bookmark className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => handleShareClick(featuredEdition, e)}
-                      title="Share this edition"
-                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
-                    >
-                      <Share2 className="h-4 w-4" />
-                    </button>
-                  </div>
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+                  <Sparkles className="h-4 w-4" />
+                  <span>Hospital Equipment Rental Intelligence</span>
                 </div>
 
                 <h2 className="mt-3 text-2xl font-black leading-snug text-slate-900 sm:text-3xl">
@@ -333,7 +343,7 @@ export default function Newsletter() {
                 {/* Bulleted Highlights */}
                 <div className="mt-6 rounded-2xl bg-sky-50/60 p-5 ring-1 ring-sky-100">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                    Key Clinical Takeaways:
+                    Key Rental & Equipment Advantages for Hospitals:
                   </h4>
                   <ul className="mt-3 space-y-2.5">
                     {featuredEdition.highlights.map((point, idx) => (
@@ -346,41 +356,20 @@ export default function Newsletter() {
                     ))}
                   </ul>
                 </div>
-
-                {/* Topic Tags */}
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {featuredEdition.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-sky-100 hover:text-primary"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
               </div>
 
               {/* Action Toolbar */}
-              <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-6">
+              <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-6">
                 <button
                   type="button"
                   onClick={() => setSelectedEdition(featuredEdition)}
                   className="flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-dark px-6 py-3 text-sm font-bold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                 >
                   <BookOpen className="h-4 w-4" />
-                  Read Full Issue Online
+                  Read Rental Bulletin Online
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => showToast("Downloading PDF Digest (Oct 2026 Edition)...")}
-                  className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
-                >
-                  <Download className="h-4 w-4 text-slate-500" />
-                  Download PDF Digest
-                </button>
-
-                <span className="text-xs text-slate-400 font-medium ml-auto">
+                <span className="text-xs text-slate-400 font-medium">
                   {featuredEdition.readTime}
                 </span>
               </div>
@@ -403,17 +392,17 @@ export default function Newsletter() {
             <div className="lg:col-span-5 space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sky-300">
                 <Mail className="h-3.5 w-3.5" />
-                <span>Join Reinforce Pulse</span>
+                <span>RHS Equipment Rental Network</span>
               </div>
 
               <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-                Stay Ahead of Clinical & Surgical Innovations
+                Equip Your Facility with Flexible Medical Machinery Rentals
               </h2>
 
               <p className="text-sm leading-relaxed text-slate-300 sm:text-base">
-                Join 2,800+ surgeons, urologists, hospital administrators, and biomedical engineers
-                who receive our monthly clinical digests, laser safety protocols, and certified
-                rental equipment alerts.
+                Join hospital directors, medical superintendents, OT in-charges, and procurement heads
+                receiving our monthly medical machinery rental catalogs, zero-CAPEX leasing updates,
+                and certified standby equipment availability from Reinforce Healthcare Services.
               </p>
 
               <div className="space-y-3 pt-2">
@@ -421,19 +410,19 @@ export default function Newsletter() {
                   <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
                     <Check className="h-3 w-3 stroke-[3]" />
                   </div>
-                  <span>100% Free • No spam • Curated strictly for healthcare professionals</span>
+                  <span>100% B2B Focus • Tailored strictly for hospitals, surgical centers & medical facilities</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-slate-200">
                   <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
                     <Check className="h-3 w-3 stroke-[3]" />
                   </div>
-                  <span>Exclusive access to medical equipment leasing calculators & OT guides</span>
+                  <span>Immediate updates on surgical laser rentals, endoscopy towers & OT equipment packages</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-slate-200">
                   <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
                     <Check className="h-3 w-3 stroke-[3]" />
                   </div>
-                  <span>Unsubscribe or change your specialty preferences at any time</span>
+                  <span>Flexible per-procedure, monthly, and annual rental contracts with full biomedical SLA support</span>
                 </div>
               </div>
             </div>
@@ -451,11 +440,11 @@ export default function Newsletter() {
                       <CheckCircle2 className="h-8 w-8" />
                     </div>
                     <h3 className="mt-4 text-2xl font-bold text-white">
-                      Welcome to Reinforce Pulse!
+                      Welcome to RHS Equipment Rental Network!
                     </h3>
                     <p className="mt-2 text-sm text-slate-300 max-w-md mx-auto">
-                      Thank you for joining, <strong>{formData.fullName}</strong>. A verification
-                      dispatch and the full October 2026 Edition have been sent to{" "}
+                      Thank you for subscribing, <strong>{formData.fullName}</strong>. Our latest
+                      hospital equipment rental catalog and October 2026 bulletin have been sent to{" "}
                       <span className="text-sky-300 font-semibold">{formData.email}</span>.
                     </p>
 
@@ -465,14 +454,14 @@ export default function Newsletter() {
                         onClick={() => setSelectedEdition(featuredEdition)}
                         className="cursor-pointer rounded-xl bg-gradient-to-r from-primary to-primary-dark px-6 py-2.5 text-xs font-bold text-white shadow-md hover:brightness-110"
                       >
-                        Read Current Edition Now
+                        Read Rental Bulletin Now
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsSubscribed(false)}
                         className="cursor-pointer rounded-xl border border-white/20 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-white/10"
                       >
-                        Subscribe Another Email
+                        Register Another Facility Email
                       </button>
                     </div>
                   </motion.div>
@@ -482,13 +471,13 @@ export default function Newsletter() {
                       {/* Full Name */}
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                          Full Name *
+                          Facility Contact Person Name *
                         </label>
                         <div className="relative">
                           <input
                             type="text"
                             required
-                            placeholder="Dr. Rajesh Sharma"
+                            placeholder="Dr. / Mr. Rajesh Sharma"
                             value={formData.fullName}
                             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                             className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 pl-10 text-sm text-white placeholder-slate-400 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
@@ -500,13 +489,13 @@ export default function Newsletter() {
                       {/* Email Address */}
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                          Work / Hospital Email *
+                          Hospital / Official Work Email *
                         </label>
                         <div className="relative">
                           <input
                             type="email"
                             required
-                            placeholder="doctor@hospital.org"
+                            placeholder="procurement@hospital.org"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-2.5 pl-10 text-sm text-white placeholder-slate-400 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
@@ -520,7 +509,7 @@ export default function Newsletter() {
                       {/* Designation / Role */}
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                          Medical Role / Designation
+                          Hospital Role / Designation
                         </label>
                         <div className="relative">
                           <select
@@ -541,12 +530,12 @@ export default function Newsletter() {
                       {/* Hospital / Clinic */}
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                          Hospital / Organization
+                          Hospital / Medical Facility Name *
                         </label>
                         <div className="relative">
                           <input
                             type="text"
-                            placeholder="Apex Super Specialty Hospital"
+                            placeholder="Apex Super Specialty Hospital & Research Centre"
                             value={formData.institution}
                             onChange={(e) =>
                               setFormData({ ...formData, institution: e.target.value })
@@ -561,7 +550,7 @@ export default function Newsletter() {
                     {/* Specialty Interests Checkboxes */}
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                        Topics of Interest (Select All That Apply)
+                        Equipment Categories Required on Rent (Select All That Apply)
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {SPECIALTY_OPTIONS.map((spec) => {
@@ -571,11 +560,10 @@ export default function Newsletter() {
                               type="button"
                               key={spec}
                               onClick={() => handleSpecialtyToggle(spec)}
-                              className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                                isSelected
-                                  ? "bg-sky-400 text-slate-950 font-bold shadow-sm"
-                                  : "bg-white/10 text-slate-300 hover:bg-white/15"
-                              }`}
+                              className={`cursor-pointer rounded-lg px-3 py-1.5 text-xs font-medium transition ${isSelected
+                                ? "bg-sky-400 text-slate-950 font-bold shadow-sm"
+                                : "bg-white/10 text-slate-300 hover:bg-white/15"
+                                }`}
                             >
                               {isSelected ? "✓ " : "+ "}
                               {spec}
@@ -592,23 +580,23 @@ export default function Newsletter() {
                         <input
                           type="radio"
                           name="frequency"
-                          value="Monthly Comprehensive Dispatch"
-                          checked={formData.frequency === "Monthly Comprehensive Dispatch"}
+                          value="Monthly Equipment Rental Digest"
+                          checked={formData.frequency === "Monthly Equipment Rental Digest"}
                           onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
                           className="accent-primary"
                         />
-                        <span>Monthly Digest</span>
+                        <span>Monthly Rental Digest</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
                           name="frequency"
-                          value="Bi-weekly Tech Alerts"
-                          checked={formData.frequency === "Bi-weekly Tech Alerts"}
+                          value="Immediate Machine Availability Alerts"
+                          checked={formData.frequency === "Immediate Machine Availability Alerts"}
                           onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
                           className="accent-primary"
                         />
-                        <span>Bi-weekly Tech Pulse</span>
+                        <span>Immediate Availability Alerts</span>
                       </label>
                     </div>
 
@@ -626,7 +614,7 @@ export default function Newsletter() {
                           <span>Processing Subscription...</span>
                         ) : (
                           <>
-                            <span>Subscribe Free to Reinforce Pulse</span>
+                            <span>Subscribe to Equipment Rental Updates</span>
                             <ArrowRight className="h-4 w-4" />
                           </>
                         )}
@@ -634,8 +622,8 @@ export default function Newsletter() {
                     </div>
 
                     <p className="text-[11px] text-center text-slate-400">
-                      By subscribing, you agree to receive medical educational newsletters. You may
-                      unsubscribe at any time.
+                      By subscribing, you agree to receive medical machinery rental updates, leasing rate notifications,
+                      and equipment availability bulletins for healthcare facilities. You may unsubscribe at any time.
                     </p>
                   </form>
                 )}
@@ -646,248 +634,171 @@ export default function Newsletter() {
       </section>
 
       {/* =========================================================================
-          NEWSLETTER ARCHIVE & ISSUES DIRECTORY
+          NEWSLETTER ARCHIVE & ISSUES DIRECTORY (CAROUSEL)
       ========================================================================= */}
       <section id="archive-section" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
               <Layers className="h-4 w-4" />
-              <span>Explore The Repository</span>
+              <span>Explore The Rental Repository</span>
             </div>
             <h2 className="mt-2 text-2xl font-black text-slate-900 sm:text-3xl">
-              Past Editions & Clinical Archives
+              Past Rental Bulletins & Equipment Archives
             </h2>
             <p className="mt-1 text-sm text-slate-500 max-w-xl">
-              Explore previous clinical whitepapers, laser safety protocols, and endo-urological
-              equipment reviews.
+              Explore previous medical equipment rental guides, laser leasing benchmarks, and
+              hospital OT deployment reviews from Reinforce Healthcare Services.
             </p>
           </div>
 
-          {/* Real-time Search Input */}
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search topics, lasers, authors..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-xs text-slate-800 placeholder-slate-400 shadow-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
-            {searchQuery && (
+          {/* Carousel Arrows & Controls matching Blogs.jsx */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-slate-400 hidden sm:inline-block">
+              Swipe or use controls
+            </span>
+
+            <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                onClick={handleScrollLeft}
+                disabled={!canScrollLeft}
+                aria-label="Scroll left"
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200 cursor-pointer ${
+                  canScrollLeft
+                    ? "border-slate-300 bg-white text-slate-700 hover:border-primary hover:bg-gradient-to-r hover:from-primary hover:to-primary-dark hover:text-white shadow-sm hover:shadow-md hover:shadow-primary/25"
+                    : "border-slate-200 bg-slate-50 text-slate-300 cursor-not-allowed"
+                }`}
               >
-                <X className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4" />
               </button>
-            )}
+
+              <button
+                type="button"
+                onClick={handleScrollRight}
+                disabled={!canScrollRight}
+                aria-label="Scroll right"
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200 cursor-pointer ${
+                  canScrollRight
+                    ? "border-slate-300 bg-white text-slate-700 hover:border-primary hover:bg-gradient-to-r hover:from-primary hover:to-primary-dark hover:text-white shadow-sm hover:shadow-md hover:shadow-primary/25"
+                    : "border-slate-200 bg-slate-50 text-slate-300 cursor-not-allowed"
+                }`}
+              >
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Category Filter Chips */}
-        <div className="mt-6 flex flex-wrap gap-2 overflow-x-auto pb-2">
-          {NEWSLETTER_CATEGORIES.map((category) => {
-            const isActive = activeCategory === category;
-            return (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setActiveCategory(category)}
-                className={`cursor-pointer rounded-full px-4 py-2 text-xs font-bold transition ${
-                  isActive
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-slate-900"
-                }`}
-              >
-                {category}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Archive Cards Grid */}
-        <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {/* 
+            HORIZONTAL SCROLLING ROW CONTAINER (CAROUSEL)
+            Viewport Constraint matching Blogs.jsx:
+            - Mobile: w-[86%] min-w-[86%] max-w-[86%] (single card peek)
+            - Tablet: sm:w-[calc((100%-24px)/2)] (exactly 2 cards visible)
+            - Desktop: lg:w-[calc((100%-48px)/3)] (EXACTLY 3 cards visible)
+        */}
+        <div className="relative mt-8">
           {filteredEditions.length > 0 ? (
-            filteredEditions.map((edition) => {
-              const isBookmarked = bookmarkedIds.includes(edition.id);
-              return (
-                <article
-                  key={edition.id}
-                  onClick={() => setSelectedEdition(edition)}
-                  className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-xl cursor-pointer"
-                >
-                  <div>
-                    {/* Cover Image Container */}
-                    <div className="relative h-52 w-full overflow-hidden bg-slate-100">
-                      <img
-                        src={edition.image}
-                        alt={edition.title}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-
-                      {/* Category Badge */}
-                      <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary shadow-sm backdrop-blur-sm">
-                        {edition.category}
-                      </div>
-
-                      {/* Bookmark Button */}
-                      <button
-                        type="button"
-                        onClick={(e) => handleBookmarkClick(edition.id, e)}
-                        className={`absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-md transition ${
-                          isBookmarked
-                            ? "bg-primary text-white"
-                            : "bg-black/30 text-white hover:bg-white hover:text-primary"
-                        }`}
-                      >
-                        <Bookmark className="h-4 w-4" />
-                      </button>
-
-                      {/* Date & Volume Overlay */}
-                      <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-white text-xs font-semibold">
-                        <span>{edition.date}</span>
-                        <span>{edition.vol}</span>
-                      </div>
-                    </div>
-
-                    {/* Text Details */}
-                    <div className="p-6">
-                      <div className="flex items-center gap-3 text-xs text-slate-500 font-medium">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {edition.readTime}
-                        </span>
-                        <span>•</span>
-                        <span>{edition.pages}</span>
-                      </div>
-
-                      <h3 className="mt-2.5 text-lg font-bold leading-snug text-slate-900 transition-colors group-hover:text-primary line-clamp-2">
-                        {edition.title}
-                      </h3>
-
-                      <p className="mt-2 text-xs leading-relaxed text-slate-600 line-clamp-3">
-                        {edition.summary}
-                      </p>
-
-                      {/* Tag Pills */}
-                      <div className="mt-4 flex flex-wrap gap-1.5">
-                        {edition.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Bottom CTA */}
-                  <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
-                    <span className="flex items-center gap-1.5 text-xs font-bold text-primary group-hover:translate-x-1 transition-transform">
-                      <span>Read Edition</span>
-                      <ChevronRight className="h-3.5 w-3.5" />
-                    </span>
-
-                    <button
-                      type="button"
-                      onClick={(e) => handleShareClick(edition, e)}
-                      title="Share link"
-                      className="text-slate-400 hover:text-slate-600 transition"
+            <>
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-6 overflow-x-auto pb-6 pt-2 scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {filteredEditions.map((edition) => {
+                  return (
+                    <article
+                      key={edition.id}
+                      data-edition-card
+                      onClick={() => setSelectedEdition(edition)}
+                      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-xl cursor-pointer shrink-0 snap-start
+                        w-[86%] min-w-[86%] max-w-[86%]
+                        sm:w-[calc((100%-24px)/2)] sm:min-w-[calc((100%-24px)/2)] sm:max-w-[calc((100%-24px)/2)]
+                        lg:w-[calc((100%-48px)/3)] lg:min-w-[calc((100%-48px)/3)] lg:max-w-[calc((100%-48px)/3)]"
                     >
-                      <Share2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </article>
-              );
-            })
+                      <div>
+                        {/* Cover Image Container */}
+                        <div className="relative h-52 w-full overflow-hidden bg-slate-100">
+                          <img
+                            src={edition.image}
+                            alt={edition.title}
+                            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+                          {/* Date Overlay */}
+                          <div className="absolute bottom-3 left-4 right-4 text-white text-xs font-semibold">
+                            <span>{edition.date}</span>
+                          </div>
+                        </div>
+
+                        {/* Text Details */}
+                        <div className="p-6">
+                          <div className="flex items-center gap-3 text-xs text-slate-500 font-medium">
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {edition.readTime}
+                            </span>
+                            <span>•</span>
+                            <span>{edition.pages}</span>
+                          </div>
+
+                          <h3 className="mt-2.5 text-lg font-bold leading-snug text-slate-900 transition-colors group-hover:text-primary line-clamp-2">
+                            {edition.title}
+                          </h3>
+
+                          <p className="mt-2 text-xs leading-relaxed text-slate-600 line-clamp-3">
+                            {edition.summary}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Card Bottom CTA */}
+                      <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+                        <span className="flex items-center gap-1.5 text-xs font-bold text-primary group-hover:translate-x-1 transition-transform">
+                          <span>Read Rental Bulletin</span>
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {/* Dots Pagination Indicator matching Blogs.jsx */}
+              {filteredEditions.length > 3 && (
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  {filteredEditions.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => scrollToCardIndex(idx)}
+                      aria-label={`Go to slide ${idx + 1}`}
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                        scrollIndex === idx
+                          ? "w-8 bg-gradient-to-r from-primary to-primary-dark shadow-sm shadow-primary/30"
+                          : "w-2 bg-slate-300 hover:bg-slate-400"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           ) : (
             <div className="col-span-full py-16 text-center">
               <BookOpen className="mx-auto h-12 w-12 text-slate-300" />
-              <h3 className="mt-4 text-base font-bold text-slate-700">No matching issues found</h3>
+              <h3 className="mt-4 text-base font-bold text-slate-700">No matching rental bulletins found</h3>
               <p className="mt-1 text-xs text-slate-500">
-                Try refining your keyword search or select "All Editions".
+                Try searching for lasers, endoscopy towers, urodynamics, or rental plans.
               </p>
               <button
                 type="button"
-                onClick={() => {
-                  setSearchQuery("");
-                  setActiveCategory("All Editions");
-                }}
+                onClick={() => setSearchQuery("")}
                 className="mt-4 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white"
               >
                 Reset Filters
               </button>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SUBSCRIBER PERKS & BENEFITS SECTION
-      ========================================================================= */}
-      <section className="bg-white py-16 border-y border-slate-100">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="text-xs font-bold uppercase tracking-widest text-primary">
-              Subscriber Advantages
-            </span>
-            <h2 className="mt-2 text-3xl font-black text-slate-900">
-              Why Medical Teams Read Reinforce Pulse
-            </h2>
-            <p className="mt-3 text-sm text-slate-500">
-              More than an email newsletter—Reinforce Pulse is a dedicated clinical knowledge hub
-              for surgical excellence and equipment governance.
-            </p>
-          </div>
-
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {SUBSCRIBER_BENEFITS.map((benefit, idx) => (
-              <div
-                key={idx}
-                className="rounded-2xl border border-slate-100 bg-slate-50/50 p-6 transition hover:-translate-y-1 hover:border-primary/20 hover:bg-white hover:shadow-lg"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
-                  {BENEFIT_ICONS[benefit.icon]}
-                </div>
-                <h3 className="mt-4 text-base font-bold text-slate-900">{benefit.title}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-slate-600">{benefit.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* =========================================================================
-          BOTTOM CALL TO ACTION
-      ========================================================================= */}
-      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-gradient-to-r from-primary to-primary-dark p-8 sm:p-12 text-white text-center shadow-xl">
-          <img
-            src={rhsLogo}
-            alt="Reinforce Healthcare"
-            className="mx-auto h-12 w-auto object-contain brightness-0 invert opacity-90 mb-4"
-          />
-          <h3 className="text-2xl font-black sm:text-3xl">
-            Need Surgical Equipment Consultation or Hospital Rental?
-          </h3>
-          <p className="mt-3 text-sm text-sky-100 max-w-xl mx-auto">
-            Our biomedical specialists provide comprehensive laser demonstrations, machine leasing
-            evaluations, and 24/7 technical assistance.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-4">
-            <Link
-              to="/contact"
-              className="rounded-xl bg-white px-6 py-3 text-xs font-bold text-primary-dark shadow-md transition hover:bg-sky-50"
-            >
-              Get In Touch With Our Team
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -928,11 +839,10 @@ export default function Newsletter() {
                   <button
                     type="button"
                     onClick={(e) => handleBookmarkClick(selectedEdition.id, e)}
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition ${
-                      bookmarkedIds.includes(selectedEdition.id)
-                        ? "bg-primary text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition ${bookmarkedIds.includes(selectedEdition.id)
+                      ? "bg-primary text-white"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
                     title="Bookmark Edition"
                   >
                     <Bookmark className="h-4 w-4" />
@@ -987,7 +897,7 @@ export default function Newsletter() {
                 {selectedEdition.fullContent?.editorNote && (
                   <div className="rounded-2xl border-l-4 border-primary bg-sky-50/60 p-5 text-sm italic leading-relaxed text-slate-700">
                     <p className="font-bold text-slate-900 not-italic mb-1 text-xs uppercase tracking-wider">
-                      Editor & Biomedical Advisory Note:
+                      RHS Rental & Biomedical Advisory Note:
                     </p>
                     "{selectedEdition.fullContent.editorNote}"
                   </div>
@@ -1005,15 +915,15 @@ export default function Newsletter() {
                 {selectedEdition.fullContent?.specsTable && (
                   <div className="space-y-3">
                     <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider">
-                      Technical Performance & Clinical Metrics
+                      Equipment Specifications & Rental Performance Metrics
                     </h3>
                     <div className="overflow-x-auto rounded-2xl border border-slate-200">
                       <table className="w-full text-left text-xs">
                         <thead className="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider">
                           <tr>
-                            <th className="px-4 py-3">Technical Metric</th>
-                            <th className="px-4 py-3">Baseline / Standard</th>
-                            <th className="px-4 py-3 text-primary">Advanced Platform</th>
+                            <th className="px-4 py-3">Technical / Financial Parameter</th>
+                            <th className="px-4 py-3">Standard Procurement (CAPEX)</th>
+                            <th className="px-4 py-3 text-primary">RHS Rental Solution (OPEX)</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -1045,7 +955,7 @@ export default function Newsletter() {
               {/* Bottom Footer Actions in Modal */}
               <div className="flex flex-wrap items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-4">
                 <span className="text-xs text-slate-500">
-                  Reinforce Healthcare Services • Biomedical Research Division
+                  Reinforce Healthcare Services (RHS) • Medical Equipment & Machinery Rental Division
                 </span>
 
                 <div className="flex items-center gap-3">
@@ -1057,7 +967,7 @@ export default function Newsletter() {
                     className="flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-xs font-bold text-white shadow-sm hover:brightness-110"
                   >
                     <Download className="h-3.5 w-3.5" />
-                    <span>Download Edition PDF</span>
+                    <span>Download Rental Bulletin PDF</span>
                   </button>
 
                   <button

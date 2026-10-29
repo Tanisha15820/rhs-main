@@ -110,6 +110,8 @@ function App() {
           <Route path="/products" element={<MachinePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/product-enquiry" element={<ProductEnquiry />} />
+          <Route path="/product-enquiry/:machineId" element={<ProductEnquiry />} />
+          <Route path="/product-enquiry/:machineId/:machineName" element={<ProductEnquiry />} />
           <Route path="/smartxide" element={<SmartXide />} />
           <Route path="/smartxide-touch" element={<SmartXideTouch />} />
           <Route path="/dk30watt" element={<DK30Watt />} />

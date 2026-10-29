@@ -1,133 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-import fortisLogo from "../assets/images/fortis.png";
-import apolloLogo from "../assets/images/apollo.png";
-import aiimsLogo from "../assets/images/aiims.png";
-import medantaLogo from "../assets/images/medanta.png";
-import gmchLogo from "../assets/images/gmch.png";
-import pgiLogo from "../assets/images/pgi-chandigarh.png";
-import sskmLogo from "../assets/images/sskm.svg";
-import doonLogo from "../assets/images/doon-medical.webp";
-
-import { getAllClients } from "../utils/clientStorage";
-
-// =========================
-// Default Clients
-// =========================
-const DEFAULT_CLIENTS = [
-  {
-    id: "fortis",
-    name: "Fortis Healthcare",
-    presetKey: "fortis",
-    logo: fortisLogo,
-    accent: "bg-[#EDF9F7]",
-  },
-
-  {
-    id: "apollo",
-    name: "Apollo Hospitals",
-    presetKey: "apollo",
-    logo: apolloLogo,
-    accent: "bg-[#FFF5F2]",
-  },
-
-  {
-    id: "aiims",
-    name: "AIIMS",
-    presetKey: "aiims",
-    logo: aiimsLogo,
-    accent: "bg-[#F2F8FF]",
-  },
-
-  {
-    id: "medanta",
-    name: "Medanta",
-    presetKey: "medanta",
-    logo: medantaLogo,
-    accent: "bg-[#F5F3FF]",
-  },
-
-  {
-    id: "gmch",
-    name: "GMCH",
-    presetKey: "gmch",
-    logo: gmchLogo,
-    accent: "bg-[#F0FAF8]",
-  },
-
-  {
-    id: "pgi",
-    name: "PGI Chandigarh",
-    presetKey: "pgi",
-    logo: pgiLogo,
-    accent: "bg-[#FFF5F2]",
-  },
-
-  {
-    id: "sskm",
-    name: "SSKM",
-    presetKey: "sskm",
-    logo: sskmLogo,
-    accent: "bg-[#F2F8FF]",
-  },
-
-  {
-    id: "doon",
-    name: "Doon Medical College",
-    presetKey: "doon",
-    logo: doonLogo,
-    accent: "bg-[#F2F8FF]",
-  },
-];
-
-// =========================
-// Client Logo Mapping
-// =========================
-const CLIENT_LOGO_MAP = {
-  fortis: fortisLogo,
-  apollo: apolloLogo,
-  aiims: aiimsLogo,
-  medanta: medantaLogo,
-  gmch: gmchLogo,
-  pgi: pgiLogo,
-  sskm: sskmLogo,
-  doon: doonLogo,
-};
-
-// =========================
-// Get Client Logo
-// =========================
-const getClientLogo = (client) => {
-  if (client.logo) {
-    return client.logo;
-  }
-
-  if (
-    client.presetKey &&
-    CLIENT_LOGO_MAP[client.presetKey]
-  ) {
-    return CLIENT_LOGO_MAP[client.presetKey];
-  }
-
-  return null;
-};
+import CircularProgress from "@mui/material/CircularProgress";
+import { fetchPublicClients } from "../services/clientService";
+import {
+  getBgClassFromTheme,
+  clearLegacyClientsStorage,
+} from "../utils/clientStorage";
 
 // =========================
 // Client Card
 // =========================
 const ClientCard = ({ client }) => {
-  const logo = getClientLogo(client);
-
-  if (!logo) {
-    return null;
-  }
-
-  const accentClass =
-    client.accent || "bg-[#F3F7FF]";
+  const logo = client.logo_url;
+  const accentClass = getBgClassFromTheme(client.bg_theme);
+  const clientInitial = (client.name || "C").trim().charAt(0).toUpperCase();
 
   return (
     <div
+      title={client.name}
       className={`
         group
         flex
@@ -151,25 +41,33 @@ const ClientCard = ({ client }) => {
       `}
     >
       <div className="flex h-full w-full items-center justify-center">
-        <img
-          src={logo}
-          alt={`${client.name || "Client"} logo`}
-          loading="lazy"
-          className="
-            max-h-[100px]
-            max-w-[165px]
-            object-contain
-            transition-transform
-            duration-300
-            group-hover:scale-105
+        {logo ? (
+          <img
+            src={logo}
+            alt={`${client.name || "Client"} logo`}
+            loading="lazy"
+            className="
+              max-h-[100px]
+              max-w-[165px]
+              object-contain
+              transition-transform
+              duration-300
+              group-hover:scale-105
 
-            sm:max-h-[80px]
-            sm:max-w-[175px]
+              sm:max-h-[80px]
+              sm:max-w-[175px]
 
-            md:max-h-[85px]
-            md:max-w-[185px]
-          "
-        />
+              md:max-h-[85px]
+              md:max-w-[185px]
+            "
+          />
+        ) : (
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-white/80 shadow-xs">
+            <span className="text-xl font-bold text-primary">
+              {clientInitial}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -179,88 +77,57 @@ const ClientCard = ({ client }) => {
 // Clients Component
 // =========================
 function Clients() {
-  const [adminClients, setAdminClients] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const sliderRef = useRef(null);
   const animationRef = useRef(null);
   const isHovered = useRef(false);
 
   // =========================
-  // Load Clients
+  // Load Active Clients from API
   // =========================
+  const loadClients = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchPublicClients();
+      setClients(data);
+    } catch (err) {
+      console.error("Error loading public clients:", err);
+      setError("Unable to load client partners at this moment.");
+      setClients([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const loadClients = () => {
-      try {
-        const clients = getAllClients();
-
-        if (Array.isArray(clients)) {
-          setAdminClients(clients);
-        }
-      } catch (error) {
-        console.error(
-          "Error loading clients:",
-          error
-        );
-
-        setAdminClients([]);
-      }
-    };
+    // Purge legacy mock clients from localStorage if present
+    clearLegacyClientsStorage();
 
     loadClients();
 
-    window.addEventListener(
-      "rhs_clients_updated",
-      loadClients
-    );
-
-    window.addEventListener(
-      "storage",
-      loadClients
-    );
-
-    return () => {
-      window.removeEventListener(
-        "rhs_clients_updated",
-        loadClients
-      );
-
-      window.removeEventListener(
-        "storage",
-        loadClients
-      );
+    // In-browser sync with Admin Panel if modified in same browser session
+    const handleUpdate = () => {
+      loadClients();
     };
-  }, []);
+
+    window.addEventListener("rhs_clients_updated", handleUpdate);
+    return () => {
+      window.removeEventListener("rhs_clients_updated", handleUpdate);
+    };
+  }, [loadClients]);
 
   // =========================
-  // Combine Default + Admin Clients
+  // Sort Clients by display_order
   // =========================
-  const allClients = [
-    ...DEFAULT_CLIENTS,
-    ...adminClients,
-  ];
-
-  // =========================
-  // Remove Duplicate Clients
-  // =========================
-  const uniqueClients = [];
-  const usedLogos = new Set();
-
-  allClients.forEach((client) => {
-    const key =
-      client.presetKey ||
-      client.logo ||
-      client.name?.trim().toLowerCase() ||
-      client.id;
-
-    if (!key) return;
-
-    if (usedLogos.has(key)) return;
-
-    usedLogos.add(key);
-    uniqueClients.push(client);
+  const sortedClients = [...clients].sort((a, b) => {
+    const orderA = typeof a.display_order === "number" ? a.display_order : 0;
+    const orderB = typeof b.display_order === "number" ? b.display_order : 0;
+    return orderA - orderB;
   });
-
-  const displayClients = uniqueClients;
 
   // =========================
   // Automatic Scrolling
@@ -268,55 +135,46 @@ function Clients() {
   useEffect(() => {
     const slider = sliderRef.current;
 
-    if (
-      !slider ||
-      displayClients.length <= 1
-    ) {
+    if (!slider || sortedClients.length <= 1) {
       return;
     }
 
     let lastTime = performance.now();
-
     const speed = 35;
 
     const autoScroll = (currentTime) => {
-      const deltaTime =
-        currentTime - lastTime;
-
+      const deltaTime = currentTime - lastTime;
       lastTime = currentTime;
 
-      if (!isHovered.current) {
-        slider.scrollLeft +=
-          (speed * deltaTime) / 1000;
+      // Only autoscroll if content overflows the container
+      if (slider.scrollWidth > slider.clientWidth) {
+        if (!isHovered.current) {
+          slider.scrollLeft += (speed * deltaTime) / 1000;
+        }
+
+        // Return to beginning after reaching the end
+        if (
+          slider.scrollLeft + slider.clientWidth >=
+          slider.scrollWidth - 5
+        ) {
+          slider.scrollTo({
+            left: 0,
+            behavior: "smooth",
+          });
+        }
       }
 
-      // Return to beginning after reaching the end
-      if (
-        slider.scrollLeft +
-          slider.clientWidth >=
-        slider.scrollWidth - 5
-      ) {
-        slider.scrollTo({
-          left: 0,
-          behavior: "smooth",
-        });
-      }
-
-      animationRef.current =
-        requestAnimationFrame(autoScroll);
+      animationRef.current = requestAnimationFrame(autoScroll);
     };
 
-    animationRef.current =
-      requestAnimationFrame(autoScroll);
+    animationRef.current = requestAnimationFrame(autoScroll);
 
     return () => {
       if (animationRef.current) {
-        cancelAnimationFrame(
-          animationRef.current
-        );
+        cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [displayClients.length]);
+  }, [sortedClients.length]);
 
   // =========================
   // Manual Scroll
@@ -325,10 +183,7 @@ function Clients() {
     if (!sliderRef.current) return;
 
     sliderRef.current.scrollBy({
-      left:
-        direction === "left"
-          ? -500
-          : 500,
+      left: direction === "left" ? -500 : 500,
       behavior: "smooth",
     });
   };
@@ -416,144 +271,170 @@ function Clients() {
         </div>
 
         {/* =========================
+            Loading State
+        ========================== */}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <CircularProgress size={32} className="text-primary" />
+            <p className="mt-3 text-xs font-medium text-slate-500">
+              Loading client partners...
+            </p>
+          </div>
+        )}
+
+        {/* =========================
+            Error State
+        ========================== */}
+        {!isLoading && error && (
+          <div className="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-xs">
+            <p className="text-xs font-medium text-slate-500">{error}</p>
+          </div>
+        )}
+
+        {/* =========================
+            Empty State
+        ========================== */}
+        {!isLoading && !error && sortedClients.length === 0 && (
+          <div className="mx-auto max-w-md rounded-2xl border border-dashed border-slate-200 bg-white/60 p-8 text-center">
+            <p className="text-xs font-medium text-slate-500">
+              No client partners available at this moment.
+            </p>
+          </div>
+        )}
+
+        {/* =========================
             Client Carousel
         ========================== */}
-        <div
-          className="
-            relative
-            w-full
-          "
-        >
-          {/* Left Arrow */}
-          <button
-            type="button"
-            onClick={() => scroll("left")}
-            aria-label="Previous clients"
-            className="
-              absolute
-              -left-4
-              top-1/2
-              z-20
-              hidden
-              h-11
-              w-11
-              -translate-y-1/2
-              cursor-pointer
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-[#DCE7F1]
-              bg-white
-              text-[#1684D8]
-              shadow-md
-              transition-all
-              duration-200
-              hover:-translate-x-1
-              hover:shadow-lg
-              lg:flex
-              xl:-left-6
-            "
-          >
-            <ChevronLeft
-              size={21}
-              strokeWidth={2}
-            />
-          </button>
-
-          {/* =========================
-              Client Cards
-          ========================== */}
-          <div
-            ref={sliderRef}
-            onMouseEnter={() => {
-              isHovered.current = true;
-            }}
-            onMouseLeave={() => {
-              isHovered.current = false;
-            }}
-            className="
-              flex
-              flex-nowrap
-              gap-5
-              overflow-x-auto
-              px-2
-              pb-5
-              scrollbar-none
-            "
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
-            {displayClients.map((client) => (
-              <ClientCard
-                key={
-                  client.presetKey ||
-                  client.id
-                }
-                client={client}
+        {!isLoading && !error && sortedClients.length > 0 && (
+          <div className="relative w-full">
+            {/* Left Arrow */}
+            <button
+              type="button"
+              onClick={() => scroll("left")}
+              aria-label="Previous clients"
+              className="
+                absolute
+                -left-4
+                top-1/2
+                z-20
+                hidden
+                h-11
+                w-11
+                -translate-y-1/2
+                cursor-pointer
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-[#DCE7F1]
+                bg-white
+                text-[#1684D8]
+                shadow-md
+                transition-all
+                duration-200
+                hover:-translate-x-1
+                hover:shadow-lg
+                lg:flex
+                xl:-left-6
+              "
+            >
+              <ChevronLeft
+                size={21}
+                strokeWidth={2}
               />
-            ))}
-          </div>
+            </button>
 
-          {/* Right Arrow */}
-          <button
-            type="button"
-            onClick={() => scroll("right")}
-            aria-label="Next clients"
-            className="
-              absolute
-              -right-4
-              top-1/2
-              z-20
-              hidden
-              h-11
-              w-11
-              -translate-y-1/2
-              cursor-pointer
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-[#DCE7F1]
-              bg-white
-              text-[#1684D8]
-              shadow-md
-              transition-all
-              duration-200
-              hover:translate-x-1
-              hover:shadow-lg
-              lg:flex
-              xl:-right-6
-            "
-          >
-            <ChevronRight
-              size={21}
-              strokeWidth={2}
-            />
-          </button>
-        </div>
+            {/* =========================
+                Client Cards
+            ========================== */}
+            <div
+              ref={sliderRef}
+              onMouseEnter={() => {
+                isHovered.current = true;
+              }}
+              onMouseLeave={() => {
+                isHovered.current = false;
+              }}
+              className="
+                flex
+                flex-nowrap
+                gap-5
+                overflow-x-auto
+                px-2
+                pb-5
+                scrollbar-none
+              "
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {sortedClients.map((client) => (
+                <ClientCard
+                  key={client.id}
+                  client={client}
+                />
+              ))}
+            </div>
+
+            {/* Right Arrow */}
+            <button
+              type="button"
+              onClick={() => scroll("right")}
+              aria-label="Next clients"
+              className="
+                absolute
+                -right-4
+                top-1/2
+                z-20
+                hidden
+                h-11
+                w-11
+                -translate-y-1/2
+                cursor-pointer
+                items-center
+                justify-center
+                rounded-full
+                border
+                border-[#DCE7F1]
+                bg-white
+                text-[#1684D8]
+                shadow-md
+                transition-all
+                duration-200
+                hover:translate-x-1
+                hover:shadow-lg
+                lg:flex
+                xl:-right-6
+              "
+            >
+              <ChevronRight
+                size={21}
+                strokeWidth={2}
+              />
+            </button>
+          </div>
+        )}
 
         {/* =========================
             Mobile Indicator
         ========================== */}
-        <div
-          className="
-            mt-4
-            flex
-            items-center
-            justify-center
-            gap-2
-            lg:hidden
-          "
-        >
-          <span className="h-1.5 w-8 rounded-full bg-[#20AFA7]" />
-
-          <span className="h-1.5 w-1.5 rounded-full bg-[#D8E5F0]" />
-
-          <span className="h-1.5 w-1.5 rounded-full bg-[#D8E5F0]" />
-        </div>
+        {!isLoading && !error && sortedClients.length > 0 && (
+          <div
+            className="
+              mt-4
+              flex
+              items-center
+              justify-center
+              gap-2
+              lg:hidden
+            "
+          >
+            <span className="h-1.5 w-8 rounded-full bg-[#20AFA7]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#D8E5F0]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#D8E5F0]" />
+          </div>
+        )}
       </div>
     </section>
   );

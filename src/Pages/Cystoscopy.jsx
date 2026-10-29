@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import SEO from "../Components/SEO";
 import bannerBg from "../assets/images/smartxide_banner.png";
-import cystoscopeImg from "../assets/images/cystoscope.png";
+import cystoscopeImg from "../assets/images/RZ-Mediz.png";
 import rzMedi1 from "../assets/images/RZMedi1.png";
 import rzMedi2 from "../assets/images/RZMedi2.png";
 import rzMedi3 from "../assets/images/RZMedi3.png";
@@ -304,33 +304,33 @@ const Cystoscopy = () => {
             {/* Desktop Feature Cards */}
             <FeatureCard
               number="01"
-              type="RIGID CYSTOSCOPE"
-              title="CAD Rod-Lens Optics"
-              description="High-definition rod-lens optics for clear visualization during cystoscopy."
+              type="UNIVERSAL ADAPTERS"
+              title="Color-Coded Lock Adapters"
+              description="3-step stainless-steel lock and light adapters compatible with Storz, Wolf, and Olympus systems."
               image={rzMedi1}
               position="left-2 top-16"
             />
             <FeatureCard
               number="02"
-              type="LIGHT SOURCE CONNECTION"
-              title="Color-Coded Optics"
-              description="Light cable connector supporting cystoscope illumination and optical viewing."
+              type="ATRAUMATIC SHEATHS"
+              title="Sheath Shafts & Couplers"
+              description="Laser-welded German stainless-steel sheaths (17–25 Charr.) for smooth atraumatic insertion."
               image={rzMedi2}
               position="bottom-14 left-2"
             />
             <FeatureCard
               number="03"
-              type="IRRIGATION SYSTEM"
-              title="Continuous Irrigation"
-              description="Irrigation collection bottle supports fluid management during procedures."
+              type="WORKING CHANNELS"
+              title="Cystoscope Bridges & Ports"
+              description="Low-angle working channel bridges for smooth passage of biopsy forceps and laser fibers."
               image={rzMedi3}
               position="right-2 top-16"
             />
             <FeatureCard
               number="04"
-              type="FULL HD MONITOR"
-              title="High-Definition Display"
-              description="Medical monitor displays the endoscopic image for real-time visualization."
+              type="MODULAR ARCHITECTURE"
+              title="CAD Modular Assembly"
+              description="Interchangeable German CAD system combining HD rod-lens telescopes, Albarran deflectors, and sheaths."
               image={rzMedi4}
               position="bottom-14 right-2"
             />
@@ -466,12 +466,13 @@ const Cystoscopy = () => {
 
             {/*Central Endoscope Image - Desktop */}
 
-            <div className="relative mx-auto hidden h-[380px] w-full max-w-[550px] items-end justify-center sm:h-[420px] lg:flex lg:h-[480px]">
-              <div className="absolute bottom-14 left-1/2 h-40 w-72 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl"></div>
+            <div className="relative mx-auto hidden h-[320px] w-full max-w-[450px] items-end justify-center sm:h-[350px] lg:flex lg:h-[400px]">
+              <div className="absolute bottom-10 left-1/2 h-32 w-60 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl"></div>
+
               <motion.img
                 src={cystoscopeImg}
                 alt="RZ Medizintechnik High Definition Cystoscopy Set"
-                className="relative z-10 h-[360px] w-auto object-contain drop-shadow-[0_25px_30px_rgba(39,96,150,0.20)] lg:h-[440px]"
+                className="relative z-10 h-[170px] w-auto -translate-y-16 object-contain drop-shadow-[0_25px_30px_rgba(39,96,150,0.20)] lg:h-[290px]"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -502,30 +503,30 @@ const Cystoscopy = () => {
             <div className="mx-auto grid max-w-[400px] grid-cols-1 gap-3 px-2 sm:px-4 lg:hidden">
               <MobileFeatureCard
                 number="01"
-                type="RIGID CYSTOSCOPE"
-                title="CAD Rod-Lens Optics"
-                description="High-definition rod-lens optics for clear visualization during cystoscopy."
+                type="UNIVERSAL ADAPTERS"
+                title="Color-Coded Lock Adapters"
+                description="3-step stainless-steel lock and light adapters compatible with Storz, Wolf, and Olympus systems."
                 image={rzMedi1}
               />
               <MobileFeatureCard
                 number="02"
-                type="LIGHT SOURCE CONNECTION"
-                title="Color-Coded Optics"
-                description="Light cable connector supporting cystoscope illumination and optical viewing."
+                type="ATRAUMATIC SHEATHS"
+                title="Sheath Shafts & Couplers"
+                description="Laser-welded German stainless-steel sheaths (17–25 Charr.) for smooth atraumatic insertion."
                 image={rzMedi2}
               />
               <MobileFeatureCard
                 number="03"
-                type="IRRIGATION SYSTEM"
-                title="Continuous Irrigation"
-                description="Irrigation collection bottle supports fluid management during procedures."
+                type="WORKING CHANNELS"
+                title="Cystoscope Bridges & Ports"
+                description="Low-angle working channel bridges for smooth passage of biopsy forceps and laser fibers."
                 image={rzMedi3}
               />
               <MobileFeatureCard
                 number="04"
-                type="FULL HD MONITOR"
-                title="High-Definition Display"
-                description="Medical monitor displays the endoscopic image for real-time visualization."
+                type="MODULAR ARCHITECTURE"
+                title="CAD Modular Assembly"
+                description="Interchangeable German CAD system combining HD rod-lens telescopes, Albarran deflectors, and sheaths."
                 image={rzMedi4}
               />
             </div>

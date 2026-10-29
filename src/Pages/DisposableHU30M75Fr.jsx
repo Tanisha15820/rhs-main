@@ -56,7 +56,7 @@ import SEO from "../Components/SEO";
 
 import bannerBg from "../assets/images/smartxide_banner.png";
 
-import fullScopeImg from "../assets/images/hu30m_75_scope.png";
+import fullScopeImg from "../assets/images/7.5.png";
 
 import surgeonHandImg from "../assets/images/hu30m_75_surgeon.jpg";
 
@@ -67,7 +67,6 @@ import dualScopesImg from "../assets/images/hu30m_dual_scopes.jpg";
 import processorImg from "../assets/images/huv01_processor.jpg";
 
 import tipImg from "../assets/images/ureterorenoscope_tip.jpg";
-
 import keypoint1 from "../assets/images/7.51.png";
 import keypoint2 from "../assets/images/7.52.png";
 import keypoint3 from "../assets/images/7.53.png";
@@ -351,253 +350,144 @@ const DisposableHU30M75Fr = () => {
 
           {/* Product Center Area with Floating Feature Cards */}
 
-          <div className="relative mx-auto mt-4 max-w-[1100px] sm:mt-6">
+
+          {/* Product Center Area with Floating Feature Cards */}
+          <div className="relative mx-auto mt-4 max-w-[1180px] sm:mt-6">
 
             {/* Desktop Feature Card 01 - Top Left */}
-
             <FeatureCard
-
               number="01"
-
-              type="ERGONOMIC HANDLE"
-
-              title="Intuitive Operation"
-
-              description="Ergonomic handle design provides comfortable grip and precise control during procedures."
-
+              type="7.5FR DISTAL TIP"
+              title="285° Bidirectional Deflection"
+              description="Ultra-slim 7.5Fr distal shaft with 285° up/down articulation for effortless calyceal access."
               image={keypoint1}
-
-              position="left-2 xl:left-4 top-2 xl:top-4"
-
+              position="left-2 xl:left-4 top-16 xl:top-20"
             />
-
-
 
             {/* Desktop Feature Card 02 - Bottom Left */}
-
             <FeatureCard
-
               number="02"
-
-              type="IRRIGATION PORT"
-
-              title="39% More Irrigation Flow"
-
-              description="Dedicated irrigation port delivers 39% higher irrigation flow per unit time than 9.3Fr scopes."
-
+              type="WORKING & IRRIGATION PORT"
+              title="3.6Fr Channel (+39% Flow)"
+              description="3.6Fr working channel delivers 39% higher irrigation flow per unit time to reduce intrarenal pressure."
               image={keypoint2}
-
-              position="bottom-2 xl:bottom-4 left-2 xl:left-4"
-
+              position="bottom-16 xl:bottom-20 left-2 xl:left-4"
             />
-
-
 
             {/* Desktop Feature Card 03 - Top Right */}
-
             <FeatureCard
-
               number="03"
-
-              type="DISTAL TIP"
-
-              title="7.5Fr Ultra-Slim Insertion Profile"
-
-              description="Ultra-slim 7.5Fr distal tip supports easy ureter engagement and minimizes trauma."
-
+              type="ERGONOMIC HANDLE"
+              title="Deflection Lever & Control"
+              description="Lightweight ergonomic handle with 1:1 torque ratio, thumb deflection lever, and camera button."
               image={keypoint3}
-
-              position="right-2 xl:right-4 top-2 xl:top-4"
-
+              position="right-2 xl:right-4 top-16 xl:top-20"
             />
-
-
 
             {/* Desktop Feature Card 04 - Bottom Right */}
-
             <FeatureCard
-
               number="04"
-
-              type="285° BIDIRECTIONAL BENDING"
-
-              title="Excellent Maneuverability"
-
-              description="285° up/down bending angle provides superior maneuverability, even in complex anatomy."
-
+              type="DIGITAL VIDEO LINK"
+              title="Integrated Processor Cable"
+              description="Plug-and-play digital transmission cable connects directly to HugeMed image processors."
               image={keypoint4}
-
-              position="bottom-2 xl:bottom-4 right-2 xl:right-4"
-
+              position="bottom-16 xl:bottom-20 right-2 xl:right-4"
             />
 
+            {/* Desktop Arrows - Aligned with Feature Cards */}
 
-
-            {/* Desktop Arrows */}
-
-            <div className="absolute left-[310px] xl:left-[324px] top-[84px] hidden items-center xl:flex">
-
+            {/* Top Left Arrow */}
+            <div className="absolute left-[310px] xl:left-[324px] top-[calc(4rem+67.5px)] xl:top-[calc(5rem+67.5px)] hidden -translate-y-1/2 items-center xl:flex">
               <div className="h-2 w-2 rounded-full border border-primary bg-white"></div>
-
               <div className="h-[1px] w-[24px] bg-primary"></div>
-
               <ArrowRight className="h-4 w-4 text-primary" strokeWidth={1.5} />
-
             </div>
 
-
-
-            <div className="absolute bottom-[84px] left-[310px] xl:left-[324px] hidden items-center xl:flex">
-
+            {/* Bottom Left Arrow */}
+            <div className="absolute bottom-[calc(4rem+67.5px)] xl:bottom-[calc(5rem+67.5px)] left-[310px] xl:left-[324px] hidden translate-y-1/2 items-center xl:flex">
               <div className="h-2 w-2 rounded-full border border-primary bg-white"></div>
-
               <div className="h-[1px] w-[24px] bg-primary"></div>
-
               <ArrowRight className="h-4 w-4 text-primary" strokeWidth={1.5} />
-
             </div>
 
-
-
-            <div className="absolute right-[310px] xl:right-[324px] top-[84px] hidden items-center xl:flex">
-
+            {/* Top Right Arrow */}
+            <div className="absolute right-[310px] xl:right-[324px] top-[calc(4rem+67.5px)] xl:top-[calc(5rem+67.5px)] hidden -translate-y-1/2 items-center xl:flex">
               <ArrowLeft className="h-4 w-4 text-primary" strokeWidth={1.5} />
-
               <div className="h-[1px] w-[24px] bg-primary"></div>
-
               <div className="h-2 w-2 rounded-full border border-primary bg-white"></div>
-
             </div>
 
-
-
-            <div className="absolute bottom-[84px] right-[310px] xl:right-[324px] hidden items-center xl:flex">
-
+            {/* Bottom Right Arrow */}
+            <div className="absolute bottom-[calc(4rem+67.5px)] xl:bottom-[calc(5rem+67.5px)] right-[310px] xl:right-[324px] hidden translate-y-1/2 items-center xl:flex">
               <ArrowLeft className="h-4 w-4 text-primary" strokeWidth={1.5} />
-
               <div className="h-[1px] w-[24px] bg-primary"></div>
-
               <div className="h-2 w-2 rounded-full border border-primary bg-white"></div>
-
             </div>
-
-
 
             {/* Central Scope - Desktop */}
-
             <div className="relative mx-auto hidden h-[460px] xl:h-[500px] w-full max-w-[460px] items-center justify-center xl:flex">
-
               <div className="absolute bottom-12 left-1/2 h-32 w-64 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl"></div>
 
               <motion.img
-
                 src={fullScopeImg}
-
                 alt="Disposable HU30M 7.5 Fr Flexible Video Ureterorenoscope"
-
                 className="relative z-10 max-h-[320px] xl:max-h-[360px] w-auto max-w-[440px] object-contain drop-shadow-[0_20px_30px_rgba(25,168,232,0.22)] rounded-xl"
-
                 initial={{ opacity: 0, y: 30 }}
-
                 animate={{ opacity: 1, y: 0 }}
-
                 transition={{ duration: 0.8, ease: "easeOut" }}
-
               />
-
             </div>
 
-
-
             {/* Central Scope - Mobile */}
-
             <div className="relative mx-auto flex h-auto w-full max-w-[280px] sm:max-w-[320px] items-center justify-center my-4 sm:my-6 xl:hidden">
-
               <div className="absolute bottom-4 left-1/2 h-20 w-40 -translate-x-1/2 rounded-full bg-primary/20 blur-2xl"></div>
 
               <motion.img
-
                 src={fullScopeImg}
-
                 alt="Disposable HU30M 7.5 Fr Flexible Video Ureterorenoscope"
-
                 className="relative z-10 max-h-[200px] sm:max-h-[230px] w-auto max-w-full object-contain drop-shadow-[0_15px_20px_rgba(25,168,232,0.2)] rounded-xl"
-
                 initial={{ opacity: 0, y: 20 }}
-
                 animate={{ opacity: 1, y: 0 }}
-
                 transition={{ duration: 0.8, ease: "easeOut" }}
-
               />
-
             </div>
-
-
 
             {/* Mobile Feature Cards */}
-
             <div className="mx-auto grid max-w-[420px] grid-cols-1 gap-4 px-2 pb-6 sm:px-4 xl:hidden">
-
               <MobileFeatureCard
-
                 number="01"
-
-                type="ERGONOMIC HANDLE"
-
-                title="Intuitive Operation"
-
-                description="Ergonomic handle design provides comfortable grip and precise control during procedures."
-
+                type="7.5FR DISTAL TIP"
+                title="285° Bidirectional Deflection"
+                description="Ultra-slim 7.5Fr distal shaft with 285° up/down articulation for effortless calyceal access."
                 image={keypoint1}
-
               />
 
               <MobileFeatureCard
-
                 number="02"
-
-                type="IRRIGATION PORT"
-
-                title="39% More Irrigation Flow"
-
-                description="Dedicated irrigation port delivers 39% higher irrigation flow per unit time than 9.3Fr scopes."
-
+                type="WORKING & IRRIGATION PORT"
+                title="3.6Fr Channel (+39% Flow)"
+                description="3.6Fr working channel delivers 39% higher irrigation flow per unit time to reduce intrarenal pressure."
                 image={keypoint2}
-
               />
 
               <MobileFeatureCard
-
                 number="03"
-
-                type="DISTAL TIP"
-
-                title="7.5Fr Ultra-Slim Insertion Profile"
-
-                description="Ultra-slim 7.5Fr distal tip supports easy ureter engagement and minimizes trauma."
-
+                type="ERGONOMIC HANDLE"
+                title="Deflection Lever & Control"
+                description="Lightweight ergonomic handle with 1:1 torque ratio, thumb deflection lever, and camera button."
                 image={keypoint3}
-
               />
 
               <MobileFeatureCard
-
                 number="04"
-
-                type="285° BIDIRECTIONAL BENDING"
-
-                title="Excellent Maneuverability"
-
-                description="285° up/down bending angle provides superior maneuverability, even in complex anatomy."
-
+                type="DIGITAL VIDEO LINK"
+                title="Integrated Processor Cable"
+                description="Plug-and-play digital transmission cable connects directly to HugeMed image processors."
                 image={keypoint4}
-
               />
-
             </div>
-
           </div>
+
 
         </div>
 

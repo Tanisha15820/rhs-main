@@ -588,7 +588,7 @@ function Navbar() {
             Blogs
           </Link>
 
-          {/* Newsletter */}
+          {/* Newsletter - Temporarily commented out
           <Link
             to="/newsletter"
             className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-[15px] font-semibold transition-all duration-200 ${
@@ -597,6 +597,7 @@ function Navbar() {
           >
             Newsletter
           </Link>
+          */}
 
           {/* Contact */}
           <Link
@@ -931,7 +932,7 @@ function Navbar() {
               <span>Blogs</span>
             </Link>
 
-            {/* Newsletter */}
+            {/* Newsletter - Temporarily commented out
             <Link
               to="/newsletter"
               onClick={closeMobileMenu}
@@ -942,6 +943,7 @@ function Navbar() {
               <EmailOutlinedIcon sx={{ fontSize: 18 }} />
               <span>Newsletter</span>
             </Link>
+            */}
 
             {/* Contact */}
             <Link

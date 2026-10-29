@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
 import { AnimatePresence, motion } from "framer-motion";
 
-import danflowWave1 from "../../assets/images/danflow-wave1.png";
-import danflowWave2 from "../../assets/images/danflow-wave2.png";
-import danflowWave3 from "../../assets/images/danflow-wave3.png";
-import danflowWave4 from "../../assets/images/danflow-wave4.png";
+import DanflowWaveImg from "../../assets/images/wave.png";
 
 
 /* =========================================================
@@ -42,7 +40,7 @@ const KeyPoint = ({
                 hidden
                 lg:flex
 
-                ${side === "bottom"
+                ${side === "bottom" || side === "top"
                     ? "flex-col items-center"
                     : "items-center"
                 }
@@ -75,6 +73,30 @@ const KeyPoint = ({
             )}
 
 
+            {/* TOP CONNECTOR */}
+            {side === "top" && (
+                <div className="flex flex-col items-center">
+
+                    <div
+                        className="
+                            h-[8px]
+                            w-[8px]
+                            rounded-full
+                            bg-[#1677FF]
+                        "
+                    />
+
+                    <div
+                        className="w-[1px] bg-[#1677FF]"
+                        style={{
+                            height: `${lineWidth}px`,
+                        }}
+                    />
+
+                </div>
+            )}
+
+
             {/* CARD */}
             <div
                 className="
@@ -93,6 +115,7 @@ const KeyPoint = ({
                     shadow-[0_8px_24px_rgba(15,23,42,0.08)]
                 "
             >
+
                 <div className="flex items-start gap-2">
 
                     {/* ICON */}
@@ -103,7 +126,6 @@ const KeyPoint = ({
                             flex
                             h-[26px]
                             w-[26px]
-
                             shrink-0
 
                             items-center
@@ -118,11 +140,8 @@ const KeyPoint = ({
                             className="
                                 h-[13px]
                                 w-[3px]
-
                                 rotate-45
-
                                 rounded-full
-
                                 bg-[#1677FF]
                             "
                         />
@@ -146,10 +165,8 @@ const KeyPoint = ({
                         <p
                             className="
                                 mt-[3px]
-
                                 text-[8px]
                                 leading-[1.4]
-
                                 text-slate-400
                             "
                         >
@@ -159,6 +176,7 @@ const KeyPoint = ({
                     </div>
 
                 </div>
+
             </div>
 
 
@@ -170,9 +188,7 @@ const KeyPoint = ({
                         className="
                             h-[8px]
                             w-[8px]
-
                             rounded-full
-
                             bg-[#1677FF]
                         "
                     />
@@ -321,240 +337,70 @@ const MobileKeyPoint = ({
 
 
 /* =========================================================
-   DANFLOW WAVE KEY POINT DATA
+   DANFLOW WAVE KEYPOINT DATA
    ========================================================= */
 
 const machinePoints = [
     {
-        title: "Digital Display Unit",
-        description: "Real-Time Flow Parameters",
+        title: "Weight-Cell Transducer",
+        description: "Precision Flow & Volume Sensor",
     },
 
     {
-        title: "Blue Funnel Assembly",
-        description: "Sample Intake Cone",
+        title: "Waterproof Casing",
+        description: "IP-Protected Danflow Shell",
     },
 
     {
-        title: "Measuring Beaker",
-        description: "Calibrated Collection Container",
+        title: "USB Wireless Dongle",
+        description: "866 / 915 MHz Receiver",
     },
 
     {
-        title: "Integrated Printer",
-        description: "Result Printout Module",
+        title: "Contoured Platform",
+        description: "Universal Beaker Support",
     },
 
     {
-        title: "Support Shelf",
-        description: "Device Accessory Platform",
+        title: "Optical Status LED",
+        description: "Power, Link & Flow Light",
     },
 
     {
-        title: "Height-Adjustable Stand",
-        description: "Stable Vertical Support",
-    },
-
-    {
-        title: "Caster Ring Base",
-        description: "Smooth Mobility and Stability",
+        title: "Battery & SD Module",
+        description: "2-Year Life & Auto-Backup",
     },
 ];
 
 
-/* =========================================================
-   MACHINE PART POSITION SETTINGS
+const machineParts = [
+    {
+        id: "top-platform",
 
-   THIS IS NOW SAME STYLE AS FIBER DUST.
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 62%, 31% 68%, 21% 38%, 0% 38%)",
 
-   Change ONLY this section to adjust machine parts.
-
-   You can control:
-
-   top
-   left
-   right
-   bottom
-
-   width
-   height
-
-   translateX
-   translateY
-
-   expandedX
-   expandedY
-
-   zIndex
-   ========================================================= */
-
-const machinePartPositions = {
-
-    /* =====================================================
-       PART 1
-       DIGITAL DISPLAY + WIRE
-       danflow-wave1.png
-       ===================================================== */
-
-    part1: {
-        top: "-130px",
-        left: "-40px",
-        right: "auto",
-        bottom: "auto",
-
-        width: "75%",
-        height: "70%",
-
-        translateX: "-50%",
-        translateY: "0px",
-
-        expandedX: -20,
-        expandedY: -25,
-
-        zIndex: 40,
+        x: -10,
+        y: -24,
     },
 
+    {
+        id: "usb-dongle",
 
-    /* =====================================================
-       PART 2
-       FUNNEL + BEAKER
-       danflow-wave2.png
-       ===================================================== */
+        clipPath: "polygon(0% 38%, 21% 38%, 31% 68%, 32% 96%, 0% 96%)",
 
-    part2: {
-        top: "-50px",
-        left: "22%",
-        right: "auto",
-        bottom: "auto",
-
-        width: "60%",
-        height: "auto",
-
-        translateX: "-50%",
-        translateY: "0px",
-
-        expandedX: 0,
-        expandedY: 25,
-
-        zIndex: 30,
+        x: -28,
+        y: 18,
     },
 
+    {
+        id: "base-sensor-module",
 
-    /* =====================================================
-       PART 3
-       PRINTER + SUPPORT SHELF
-       danflow-wave3.png
-       ===================================================== */
+        clipPath: "polygon(31% 68%, 100% 62%, 100% 100%, 32% 96%)",
 
-    part3: {
-        top: "30px",
-        left: "60%",
-        right: "auto",
-        bottom: "auto",
-
-        width: "78%",
-        height: "auto",
-
-        translateX: "-50%",
-        translateY: "0px",
-
-        expandedX: 20,
-        expandedY: 35,
-
-        zIndex: 35,
+        x: 18,
+        y: 24,
     },
-
-
-    /* =====================================================
-       PART 4
-       STAND + CASTER RING BASE
-       danflow-wave4.png
-       ===================================================== */
-
-    part4: {
-        top: "250px",
-        left: "1%",
-        right: "auto",
-        bottom: "auto",
-
-        width: "100%",
-        height: "auto",
-
-        translateX: "-50%",
-        translateY: "0px",
-
-        expandedX: 0,
-        expandedY: 55,
-
-        zIndex: 20,
-    },
-};
-
-
-/* =========================================================
-   REUSABLE MACHINE PART
-
-   Same approach as Fiber Dust.
-   ========================================================= */
-
-const MachinePart = ({
-    src,
-    alt,
-    config,
-    isExpanded,
-}) => {
-    return (
-        <motion.img
-            src={src}
-            alt={alt}
-            draggable={false}
-
-            style={{
-                position: "absolute",
-
-                top: config.top,
-                left: config.left,
-                right: config.right,
-                bottom: config.bottom,
-
-                width: config.width,
-                height: config.height,
-
-                transform: `
-                    translate(
-                        ${config.translateX},
-                        ${config.translateY}
-                    )
-                `,
-
-                zIndex: config.zIndex,
-            }}
-
-            animate={{
-                x:
-                    isExpanded
-                        ? config.expandedX
-                        : 0,
-
-                y:
-                    isExpanded
-                        ? config.expandedY
-                        : 0,
-            }}
-
-            transition={{
-                duration: 0.5,
-                ease: "easeOut",
-            }}
-
-            className="
-                max-w-none
-                select-none
-                object-contain
-            "
-        />
-    );
-};
+];
 
 
 /* =========================================================
@@ -570,9 +416,11 @@ const DanflowWaveMachine = () => {
 
 
     const toggleMachine = () => {
+
         setIsExpanded(
             (prev) => !prev
         );
+
     };
 
 
@@ -584,9 +432,7 @@ const DanflowWaveMachine = () => {
                 bg-white
 
                 py-12
-
                 sm:py-16
-
                 lg:py-[70px]
             "
         >
@@ -605,50 +451,15 @@ const DanflowWaveMachine = () => {
                     w-screen
                     max-w-none
 
-                    min-h-[680px]
-
-                    sm:min-h-[700px]
-
-                    lg:min-h-[720px]
+                    min-h-[520px]
+                    sm:min-h-[560px]
+                    lg:min-h-[600px]
                 "
             >
 
-                {/* =====================================================
-                    BACKGROUND GLOW
-                   ===================================================== */}
-
-                <div
-                    className="
-                        pointer-events-none
-
-                        absolute
-
-                        left-1/2
-                        top-1/2
-
-                        h-[180px]
-                        w-[180px]
-
-                        -translate-x-1/2
-                        -translate-y-1/2
-
-                        rounded-full
-
-                        bg-[#1CAFED]/[0.06]
-
-                        blur-[85px]
-
-                        sm:h-[200px]
-                        sm:w-[200px]
-
-                        lg:blur-[95px]
-                    "
-                />
-
-
-                {/* =====================================================
+                {/* =================================================
                     MACHINE WRAPPER
-                   ===================================================== */}
+                   ================================================= */}
 
                 <div
                     className="
@@ -664,9 +475,12 @@ const DanflowWaveMachine = () => {
 
                         outline-none
 
-                        min-h-[620px]
+                        min-h-[500px]
 
-                        w-[270px]
+                        w-[280px]
+                        xs:w-[320px]
+                        sm:w-[380px]
+                        lg:w-[480px]
 
                         max-w-full
                     "
@@ -679,8 +493,8 @@ const DanflowWaveMachine = () => {
 
                     aria-label={
                         isExpanded
-                            ? "Collapse Danflow Wave machine details"
-                            : "Expand Danflow Wave machine details"
+                            ? "Collapse DanFlow Wave machine details"
+                            : "Expand DanFlow Wave machine details"
                     }
 
                     aria-expanded={isExpanded}
@@ -701,9 +515,9 @@ const DanflowWaveMachine = () => {
                     }}
                 >
 
-                    {/* ===================================================
-                        DESKTOP KEYPOINTS
-                       =================================================== */}
+                    {/* =================================================
+                        DESKTOP KEY POINTS
+                       ================================================= */}
 
                     <AnimatePresence>
 
@@ -711,100 +525,99 @@ const DanflowWaveMachine = () => {
 
                             <>
 
-                                {/* DISPLAY */}
+                                {/* Weight-Cell Transducer */}
                                 <KeyPoint
-                                    title="Digital Display Unit"
-                                    description="Real-Time Flow Parameters"
+                                    title="Weight-Cell Transducer"
+                                    description="Precision Flow & Volume Sensor"
 
                                     position="
-                                        left-[-220px]
-                                        top-[5px]
+                                        left-[145px]
+                                        top-[10px]
                                     "
 
-                                    side="left"
+                                    side="bottom"
 
                                     lineWidth={60}
                                 />
 
 
-                                {/* FUNNEL */}
+                                {/* Waterproof Casing */}
                                 <KeyPoint
-                                    title="Blue Funnel Assembly"
-                                    description="Sample Intake Cone"
+                                    title="Waterproof Casing"
+                                    description="IP-Protected Danflow Shell"
 
                                     position="
-                                        left-[-100px]
-                                        top-[80px]
+                                        left-[-175px]
+                                        top-[145px]
                                     "
 
                                     side="left"
 
-                                    lineWidth={62}
+                                    lineWidth={55}
                                 />
 
 
-                                {/* BEAKER */}
+                                {/* USB Wireless Dongle */}
                                 <KeyPoint
-                                    title="Measuring Beaker"
-                                    description="Calibrated Collection Container"
+                                    title="USB Wireless Dongle"
+                                    description="866 / 915 MHz Receiver"
 
                                     position="
-                                        left-[-120px]
-                                        top-[200px]
+                                        left-[-195px]
+                                        top-[315px]
                                     "
 
                                     side="left"
 
-                                    lineWidth={62}
+                                    lineWidth={55}
                                 />
 
 
-                                {/* PRINTER */}
+                                {/* Contoured Platform */}
                                 <KeyPoint
-                                    title="Integrated Printer"
-                                    description="Result Printout Module"
+                                    title="Contoured Platform"
+                                    description="Universal Beaker Support"
 
                                     position="
-                                        right-[-275px]
-                                        top-[100px]
+                                        right-[-160px]
+                                        top-[155px]
                                     "
 
                                     side="right"
 
-                                    lineWidth={62}
+                                    lineWidth={55}
                                 />
 
 
-
-                                {/* STAND */}
+                                {/* Optical Status LED */}
                                 <KeyPoint
-                                    title="Height-Adjustable Stand"
-                                    description="Stable Vertical Support"
+                                    title="Optical Status LED"
+                                    description="Power, Link & Flow Light"
 
                                     position="
-                                        right-[-200px]
-                                        top-[400px]
+                                        right-[-175px]
+                                        top-[320px]
                                     "
 
                                     side="right"
 
-                                    lineWidth={70}
+                                    lineWidth={50}
                                 />
 
 
-                                {/* BASE */}
+                                {/* Battery & SD Module */}
                                 <KeyPoint
-                                    title="Caster Ring Base"
-                                    description="Smooth Mobility and Stability"
+                                    title="Battery & SD Module"
+                                    description="2-Year Life & Auto-Backup"
 
                                     position="
-                                        left-[-235px]
-                                        top-[540px]
+                                        left-[165px]
+                                        top-[380px]
                                     "
 
-                                    side="left"
+                                    side="top"
 
-                                    lineWidth={62}
+                                    lineWidth={55}
                                 />
 
                             </>
@@ -814,9 +627,9 @@ const DanflowWaveMachine = () => {
                     </AnimatePresence>
 
 
-                    {/* ===================================================
-                        MACHINE PARTS
-                       =================================================== */}
+                    {/* =================================================
+                        MACHINE IMAGE
+                       ================================================= */}
 
                     <div
                         className="
@@ -824,70 +637,113 @@ const DanflowWaveMachine = () => {
 
                             z-10
 
-                            h-[620px]
+                            h-[500px]
 
                             w-full
                         "
                     >
 
-                        {/* PART 1 */}
-                        <MachinePart
-                            src={danflowWave1}
-                            alt="Danflow Wave Digital Display"
+                        {/* Original assembled machine */}
+                        <motion.img
+                            src={DanflowWaveImg}
 
-                            config={
-                                machinePartPositions.part1
-                            }
+                            alt="MMT DanFlow Wave Wireless Uroflowmeter"
 
-                            isExpanded={
-                                isExpanded
-                            }
+                            draggable={false}
+
+                            animate={{
+                                opacity:
+                                    isExpanded ? 0 : 1,
+
+                                scale:
+                                    isExpanded
+                                        ? 0.99
+                                        : 1,
+                            }}
+
+                            transition={{
+                                duration: 0.35,
+                            }}
+
+                            className="
+                                absolute
+                                inset-0
+                                h-full
+                                w-full
+                                object-contain
+                                drop-shadow-[0_22px_28px_rgba(15,23,42,0.16)]
+                            "
                         />
 
 
-                        {/* PART 2 */}
-                        <MachinePart
-                            src={danflowWave2}
-                            alt="Danflow Wave Funnel and Measuring Beaker"
+                        {/* Clipped exploded parts */}
+                        {machineParts.map(
+                            (part, index) => (
 
-                            config={
-                                machinePartPositions.part2
-                            }
+                                <motion.div
+                                    key={part.id}
+                                    initial={false}
+                                    animate={{
+                                        x:
+                                            isExpanded
+                                                ? part.x
+                                                : 0,
 
-                            isExpanded={
-                                isExpanded
-                            }
-                        />
+                                        y:
+                                            isExpanded
+                                                ? part.y
+                                                : 0,
 
+                                        opacity:
+                                            isExpanded
+                                                ? 1
+                                                : 0,
+                                    }}
+                                    transition={{
+                                        duration: 0.5,
 
-                        {/* PART 3 */}
-                        <MachinePart
-                            src={danflowWave3}
-                            alt="Danflow Wave Integrated Printer"
+                                        delay:
+                                            isExpanded
+                                                ? index * 0.035
+                                                : 0,
 
-                            config={
-                                machinePartPositions.part3
-                            }
+                                        ease: [
+                                            0.22,
+                                            1,
+                                            0.36,
+                                            1,
+                                        ],
+                                    }}
+                                    style={{
+                                        clipPath:
+                                            part.clipPath,
+                                    }}
+                                    className="
+                                        absolute
+                                        inset-0
+                                        h-full
+                                        w-full
+                                    "
+                                >
 
-                            isExpanded={
-                                isExpanded
-                            }
-                        />
+                                    <img
+                                        src={DanflowWaveImg}
+                                        alt=""
+                                        draggable={false}
+                                        className="
+                                            absolute
+                                            inset-0
+                                            h-full
+                                            w-full
+                                            object-contain
+                                            drop-shadow-[0_18px_24px_rgba(15,23,42,0.14)]
+                                        "
+                                    />
 
+                                </motion.div>
 
-                        {/* PART 4 */}
-                        <MachinePart
-                            src={danflowWave4}
-                            alt="Danflow Wave Caster Stand"
-
-                            config={
-                                machinePartPositions.part4
-                            }
-
-                            isExpanded={
-                                isExpanded
-                            }
-                        />
+                            )
+                        )}
 
                     </div>
 
@@ -916,8 +772,9 @@ const DanflowWaveMachine = () => {
                 "
             >
 
-                {/* MOBILE TOGGLE */}
+                {/* TAP BUTTON */}
                 <motion.button
+
                     type="button"
 
                     onClick={toggleMachine}
@@ -938,14 +795,17 @@ const DanflowWaveMachine = () => {
                         rounded-full
 
                         border
+
                         border-[#1677FF]/15
 
                         bg-[#1677FF]/[0.04]
 
                         px-4
+
                         py-2
 
                         text-[11px]
+
                         font-medium
 
                         text-[#1677FF]
@@ -955,7 +815,6 @@ const DanflowWaveMachine = () => {
                     <span
                         className={`
                             flex
-
                             h-5
                             w-5
 
@@ -967,11 +826,13 @@ const DanflowWaveMachine = () => {
                             bg-[#1677FF]
 
                             text-[14px]
+
                             leading-none
 
                             text-white
 
                             transition-transform
+
                             duration-300
 
                             ${isExpanded
@@ -991,12 +852,13 @@ const DanflowWaveMachine = () => {
                 </motion.button>
 
 
-                {/* MOBILE CARDS */}
+                {/* MOBILE DETAIL CARDS */}
                 <AnimatePresence>
 
                     {isExpanded && (
 
                         <motion.div
+
                             initial={{
                                 opacity: 0,
                                 height: 0,

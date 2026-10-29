@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
 import { AnimatePresence, motion } from "framer-motion";
 
-import DanflowCord1 from "../../assets/images/DanflowCord1.png";
-import DanflowCord2 from "../../assets/images/DanflowCord2.png";
-import DanflowCord3 from "../../assets/images/DanflowCord3.png";
+import DanflowCordImg from "../../assets/images/chord.png";
 
 
 /* =========================================================
    DESKTOP KEY POINT
-   SAME UI AS SMARTXIDE
    ========================================================= */
 
 const KeyPoint = ({
@@ -42,7 +40,7 @@ const KeyPoint = ({
                 hidden
                 lg:flex
 
-                ${side === "bottom"
+                ${side === "bottom" || side === "top"
                     ? "flex-col items-center"
                     : "items-center"
                 }
@@ -51,10 +49,7 @@ const KeyPoint = ({
             `}
         >
 
-            {/* =================================================
-                RIGHT CONNECTOR
-               ================================================= */}
-
+            {/* RIGHT CONNECTOR */}
             {side === "right" && (
                 <div className="flex items-center">
 
@@ -78,10 +73,31 @@ const KeyPoint = ({
             )}
 
 
-            {/* =================================================
-                CARD
-               ================================================= */}
+            {/* TOP CONNECTOR */}
+            {side === "top" && (
+                <div className="flex flex-col items-center">
 
+                    <div
+                        className="
+                            h-[8px]
+                            w-[8px]
+                            rounded-full
+                            bg-[#1677FF]
+                        "
+                    />
+
+                    <div
+                        className="w-[1px] bg-[#1677FF]"
+                        style={{
+                            height: `${lineWidth}px`,
+                        }}
+                    />
+
+                </div>
+            )}
+
+
+            {/* CARD */}
             <div
                 className="
                     min-w-[150px]
@@ -110,7 +126,6 @@ const KeyPoint = ({
                             flex
                             h-[26px]
                             w-[26px]
-
                             shrink-0
 
                             items-center
@@ -125,11 +140,8 @@ const KeyPoint = ({
                             className="
                                 h-[13px]
                                 w-[3px]
-
                                 rotate-45
-
                                 rounded-full
-
                                 bg-[#1677FF]
                             "
                         />
@@ -153,10 +165,8 @@ const KeyPoint = ({
                         <p
                             className="
                                 mt-[3px]
-
                                 text-[8px]
                                 leading-[1.4]
-
                                 text-slate-400
                             "
                         >
@@ -170,10 +180,7 @@ const KeyPoint = ({
             </div>
 
 
-            {/* =================================================
-                LEFT CONNECTOR
-               ================================================= */}
-
+            {/* LEFT CONNECTOR */}
             {side === "left" && (
                 <div className="flex items-center">
 
@@ -197,10 +204,7 @@ const KeyPoint = ({
             )}
 
 
-            {/* =================================================
-                BOTTOM / VERTICAL CONNECTOR
-               ================================================= */}
-
+            {/* BOTTOM CONNECTOR */}
             {side === "bottom" && (
                 <div className="flex flex-col items-center">
 
@@ -257,11 +261,8 @@ const MobileKeyPoint = ({
             }}
             className="
                 flex
-
                 min-h-[72px]
-
                 items-start
-
                 gap-3
 
                 rounded-xl
@@ -280,10 +281,8 @@ const MobileKeyPoint = ({
             <div
                 className="
                     flex
-
                     h-8
                     w-8
-
                     shrink-0
 
                     items-center
@@ -343,204 +342,65 @@ const MobileKeyPoint = ({
 
 const machinePoints = [
     {
-        title: "Funnel Assembly",
-        description: "Sample Intake Cone",
+        title: "Pocket-Size Control Unit",
+        description: "USB Powered Aluminum Box",
     },
 
     {
-        title: "Sensor Chamber",
-        description: "Precision Flow Measurement Module",
+        title: "Multi-Pin Sensor Port",
+        description: "Locking Transducer Interface",
     },
 
     {
-        title: "Measuring Beaker",
-        description: "Calibrated Collection Container",
+        title: "USB PC Interface",
+        description: "Plug & Play Data Link",
     },
 
     {
-        title: "Control Unit",
-        description: "Main Operating and Data Interface",
+        title: "Weight-Cell Transducer",
+        description: "Precision Flow & Volume Sensor",
     },
 
     {
-        title: "Cable Connection",
-        description: "Signal and Power Connection",
+        title: "Autoclavable Surface",
+        description: "Hygienic Easy-Clean Base",
     },
 
     {
-        title: "Vertical Support Stand",
-        description: "Stable Adjustable Mounting",
-    },
-
-    {
-        title: "Base Platform",
-        description: "Rigid Stainless-Steel Support",
+        title: "Optical Status LED",
+        description: "Power & Readiness Light",
     },
 ];
 
 
-/* =========================================================
-   MACHINE PART POSITION SETTINGS
+const machineParts = [
+    {
+        id: "control-unit",
 
-   CHANGE ONLY THIS SECTION TO MOVE/RESIZE IMAGES.
+        clipPath: "polygon(0% 0%, 75% 0%, 75% 33%, 52% 48%, 48% 60%, 0% 60%)",
 
-   top
-   left
-   right
-   bottom
-
-   width
-   height
-
-   translateX
-   translateY
-
-   expandedX
-   expandedY
-
-   zIndex
-   ========================================================= */
-
-const machinePartPositions = {
-
-    /* =====================================================
-       PART 1
-       SILVER STAND
-       DanflowCord1.png
-       ===================================================== */
-
-    part1: {
-        top: "20px",
-        left: "1%",
-        right: "auto",
-        bottom: "auto",
-
-        width: "100%",
-        height: "auto",
-
-        translateX: "-50%",
-        translateY: "0px",
-
-        expandedX: -35,
-        expandedY: 0,
-
-        zIndex: 10,
+        x: -24,
+        y: -22,
     },
 
+    {
+        id: "weighing-platform",
 
-    /* =====================================================
-       PART 2
-       FUNNEL + SENSOR + BEAKER
-       DanflowCord2.png
-       ===================================================== */
+        clipPath: "polygon(75% 33%, 100% 33%, 100% 78%, 46% 78%, 48% 60%, 52% 48%)",
 
-    part2: {
-        top: "1px",
-        left: "35%",
-        right: "auto",
-        bottom: "auto",
-
-        width: "62%",
-        height: "auto",
-
-        translateX: "-50%",
-        translateY: "0px",
-
-        expandedX: 15,
-        expandedY: -25,
-
-        zIndex: 30,
+        x: 24,
+        y: -6,
     },
 
+    {
+        id: "led-nose-base",
 
-    /* =====================================================
-       PART 3
-       CONTROL UNIT
-       DanflowCord3.png
-       ===================================================== */
+        clipPath: "polygon(46% 78%, 100% 78%, 100% 100%, 46% 100%)",
 
-    part3: {
-        top: "320px",
-        left: "40%",
-        right: "auto",
-        bottom: "auto",
-
-        width: "50%",
-        height: "auto",
-
-        translateX: "-50%",
-        translateY: "0px",
-
-        expandedX: 30,
-        expandedY: 35,
-
-        zIndex: 40,
+        x: 20,
+        y: 24,
     },
-};
-
-
-/* =========================================================
-   REUSABLE MACHINE PART
-   ========================================================= */
-
-const MachinePart = ({
-    src,
-    alt,
-    config,
-    isExpanded,
-}) => {
-    return (
-        <motion.img
-            src={src}
-            alt={alt}
-            draggable={false}
-
-            style={{
-                position: "absolute",
-
-                top: config.top,
-                left: config.left,
-                right: config.right,
-                bottom: config.bottom,
-
-                width: config.width,
-                height: config.height,
-
-                transform: `
-                    translate(
-                        ${config.translateX},
-                        ${config.translateY}
-                    )
-                `,
-
-                zIndex: config.zIndex,
-            }}
-
-            animate={{
-                x:
-                    isExpanded
-                        ? config.expandedX
-                        : 0,
-
-                y:
-                    isExpanded
-                        ? config.expandedY
-                        : 0,
-            }}
-
-            transition={{
-                duration: 0.5,
-                ease: "easeOut",
-            }}
-
-            className="
-                max-w-none
-                select-none
-                object-contain
-            "
-        />
-    );
-};
+];
 
 
 /* =========================================================
@@ -556,9 +416,11 @@ const DanflowCordMachine = () => {
 
 
     const toggleMachine = () => {
+
         setIsExpanded(
             (prev) => !prev
         );
+
     };
 
 
@@ -570,9 +432,7 @@ const DanflowCordMachine = () => {
                 bg-white
 
                 py-12
-
                 sm:py-16
-
                 lg:py-[70px]
             "
         >
@@ -591,46 +451,11 @@ const DanflowCordMachine = () => {
                     w-screen
                     max-w-none
 
-                    min-h-[680px]
-
-                    sm:min-h-[700px]
-
-                    lg:min-h-[720px]
+                    min-h-[520px]
+                    sm:min-h-[560px]
+                    lg:min-h-[600px]
                 "
             >
-
-                {/* =================================================
-                    BACKGROUND GLOW
-                   ================================================= */}
-
-                <div
-                    className="
-                        pointer-events-none
-
-                        absolute
-
-                        left-1/2
-                        top-1/2
-
-                        h-[180px]
-                        w-[180px]
-
-                        -translate-x-1/2
-                        -translate-y-1/2
-
-                        rounded-full
-
-                        bg-[#1CAFED]/[0.06]
-
-                        blur-[85px]
-
-                        sm:h-[200px]
-                        sm:w-[200px]
-
-                        lg:blur-[95px]
-                    "
-                />
-
 
                 {/* =================================================
                     MACHINE WRAPPER
@@ -650,9 +475,12 @@ const DanflowCordMachine = () => {
 
                         outline-none
 
-                        min-h-[620px]
+                        min-h-[500px]
 
-                        w-[270px]
+                        w-[280px]
+                        xs:w-[320px]
+                        sm:w-[380px]
+                        lg:w-[480px]
 
                         max-w-full
                     "
@@ -665,8 +493,8 @@ const DanflowCordMachine = () => {
 
                     aria-label={
                         isExpanded
-                            ? "Collapse Danflow Cord machine details"
-                            : "Expand Danflow Cord machine details"
+                            ? "Collapse DanFlow Cord machine details"
+                            : "Expand DanFlow Cord machine details"
                     }
 
                     aria-expanded={isExpanded}
@@ -688,7 +516,7 @@ const DanflowCordMachine = () => {
                 >
 
                     {/* =================================================
-                        DESKTOP KEYPOINTS
+                        DESKTOP KEY POINTS
                        ================================================= */}
 
                     <AnimatePresence>
@@ -697,14 +525,62 @@ const DanflowCordMachine = () => {
 
                             <>
 
-                                {/* FUNNEL */}
+                                {/* Pocket-Size Control Unit */}
                                 <KeyPoint
-                                    title="Funnel Assembly"
-                                    description="Sample Intake Cone"
+                                    title="Pocket-Size Control Unit"
+                                    description="USB Powered Aluminum Box"
 
                                     position="
-                                        right-[-170px]
-                                        top-[40px]
+                                        left-[65px]
+                                        top-[15px]
+                                    "
+
+                                    side="bottom"
+
+                                    lineWidth={55}
+                                />
+
+
+                                {/* Multi-Pin Sensor Port */}
+                                <KeyPoint
+                                    title="Multi-Pin Sensor Port"
+                                    description="Locking Transducer Interface"
+
+                                    position="
+                                        left-[-185px]
+                                        top-[210px]
+                                    "
+
+                                    side="left"
+
+                                    lineWidth={55}
+                                />
+
+
+                                {/* USB PC Interface */}
+                                <KeyPoint
+                                    title="USB PC Interface"
+                                    description="Plug & Play Data Link"
+
+                                    position="
+                                        right-[-55px]
+                                        top-[95px]
+                                    "
+
+                                    side="right"
+
+                                    lineWidth={65}
+                                />
+
+
+                                {/* Weight-Cell Transducer */}
+                                <KeyPoint
+                                    title="Weight-Cell Transducer"
+                                    description="Precision Flow & Volume Sensor"
+
+                                    position="
+                                        right-[-185px]
+                                        top-[250px]
                                     "
 
                                     side="right"
@@ -713,61 +589,14 @@ const DanflowCordMachine = () => {
                                 />
 
 
-                                {/* SENSOR */}
+                                {/* Autoclavable Surface */}
                                 <KeyPoint
-                                    title="Sensor Chamber"
-                                    description="Precision Flow Measurement Module"
+                                    title="Autoclavable Surface"
+                                    description="Hygienic Easy-Clean Base"
 
                                     position="
-                                        right-[-210px]
-                                        top-[120px]
-                                    "
-
-                                    side="right"
-
-                                    lineWidth={65}
-                                />
-
-
-                                {/* CONTROL */}
-                                <KeyPoint
-                                    title="Measuring Beaker"
-                                    description="Main Operating and Data Interface"
-                                    position="
-                                        right-[-200px]
-                                        top-[200px]
-                                    "
-
-                                    side="right"
-
-                                    lineWidth={60}
-                                />
-
-
-                                {/* CABLE */}
-                                <KeyPoint
-                                    title="Cable Connection"
-                                    description="Signal and Power Connection"
-
-                                    position="
-                                        right-[-220px]
-                                        top-[370px]
-                                    "
-
-                                    side="right"
-
-                                    lineWidth={62}
-                                />
-
-
-                                {/* STAND */}
-                                <KeyPoint
-                                    title="Vertical Support Stand"
-                                    description="Stable Adjustable Mounting"
-
-                                    position="
-                                        left-[-180px]
-                                        top-[130px]
+                                        left-[60px]
+                                        top-[340px]
                                     "
 
                                     side="left"
@@ -776,19 +605,19 @@ const DanflowCordMachine = () => {
                                 />
 
 
-                                {/* BASE */}
+                                {/* Optical Status LED */}
                                 <KeyPoint
-                                    title="Base Platform"
-                                    description="Rigid Stainless-Steel Support"
+                                    title="Optical Status LED"
+                                    description="Power & Readiness Light"
 
                                     position="
-                                        right-[-180px]
-                                        top-[425px]
+                                        left-[235px]
+                                        top-[435px]
                                     "
 
-                                    side="right"
+                                    side="top"
 
-                                    lineWidth={60}
+                                    lineWidth={50}
                                 />
 
                             </>
@@ -799,7 +628,7 @@ const DanflowCordMachine = () => {
 
 
                     {/* =================================================
-                        MACHINE PARTS
+                        MACHINE IMAGE
                        ================================================= */}
 
                     <div
@@ -808,58 +637,113 @@ const DanflowCordMachine = () => {
 
                             z-10
 
-                            h-[620px]
+                            h-[500px]
 
                             w-full
                         "
                     >
 
-                        {/* STAND */}
-                        <MachinePart
-                            src={DanflowCord1}
+                        {/* Original assembled machine */}
+                        <motion.img
+                            src={DanflowCordImg}
 
-                            alt="Danflow Cord vertical support stand"
+                            alt="MMT DanFlow Cord USB Uroflowmeter"
 
-                            config={
-                                machinePartPositions.part1
-                            }
+                            draggable={false}
 
-                            isExpanded={
-                                isExpanded
-                            }
+                            animate={{
+                                opacity:
+                                    isExpanded ? 0 : 1,
+
+                                scale:
+                                    isExpanded
+                                        ? 0.99
+                                        : 1,
+                            }}
+
+                            transition={{
+                                duration: 0.35,
+                            }}
+
+                            className="
+                                absolute
+                                inset-0
+                                h-full
+                                w-full
+                                object-contain
+                                drop-shadow-[0_22px_28px_rgba(15,23,42,0.16)]
+                            "
                         />
 
 
-                        {/* FUNNEL / SENSOR / BEAKER */}
-                        <MachinePart
-                            src={DanflowCord2}
+                        {/* Clipped exploded parts */}
+                        {machineParts.map(
+                            (part, index) => (
 
-                            alt="Danflow Cord funnel sensor and beaker"
+                                <motion.div
+                                    key={part.id}
+                                    initial={false}
+                                    animate={{
+                                        x:
+                                            isExpanded
+                                                ? part.x
+                                                : 0,
 
-                            config={
-                                machinePartPositions.part2
-                            }
+                                        y:
+                                            isExpanded
+                                                ? part.y
+                                                : 0,
 
-                            isExpanded={
-                                isExpanded
-                            }
-                        />
+                                        opacity:
+                                            isExpanded
+                                                ? 1
+                                                : 0,
+                                    }}
+                                    transition={{
+                                        duration: 0.5,
 
+                                        delay:
+                                            isExpanded
+                                                ? index * 0.035
+                                                : 0,
 
-                        {/* CONTROL UNIT */}
-                        <MachinePart
-                            src={DanflowCord3}
+                                        ease: [
+                                            0.22,
+                                            1,
+                                            0.36,
+                                            1,
+                                        ],
+                                    }}
+                                    style={{
+                                        clipPath:
+                                            part.clipPath,
+                                    }}
+                                    className="
+                                        absolute
+                                        inset-0
+                                        h-full
+                                        w-full
+                                    "
+                                >
 
-                            alt="Danflow Cord control unit"
+                                    <img
+                                        src={DanflowCordImg}
+                                        alt=""
+                                        draggable={false}
+                                        className="
+                                            absolute
+                                            inset-0
+                                            h-full
+                                            w-full
+                                            object-contain
+                                            drop-shadow-[0_18px_24px_rgba(15,23,42,0.14)]
+                                        "
+                                    />
 
-                            config={
-                                machinePartPositions.part3
-                            }
+                                </motion.div>
 
-                            isExpanded={
-                                isExpanded
-                            }
-                        />
+                            )
+                        )}
 
                     </div>
 
@@ -888,8 +772,9 @@ const DanflowCordMachine = () => {
                 "
             >
 
-                {/* MOBILE TOGGLE */}
+                {/* TAP BUTTON */}
                 <motion.button
+
                     type="button"
 
                     onClick={toggleMachine}
@@ -910,11 +795,13 @@ const DanflowCordMachine = () => {
                         rounded-full
 
                         border
+
                         border-[#1677FF]/15
 
                         bg-[#1677FF]/[0.04]
 
                         px-4
+
                         py-2
 
                         text-[11px]
@@ -928,7 +815,6 @@ const DanflowCordMachine = () => {
                     <span
                         className={`
                             flex
-
                             h-5
                             w-5
 
@@ -966,15 +852,13 @@ const DanflowCordMachine = () => {
                 </motion.button>
 
 
-                {/* =================================================
-                    MOBILE CARDS
-                   ================================================= */}
-
+                {/* MOBILE DETAIL CARDS */}
                 <AnimatePresence>
 
                     {isExpanded && (
 
                         <motion.div
+
                             initial={{
                                 opacity: 0,
                                 height: 0,
